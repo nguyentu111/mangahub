@@ -1,0 +1,46 @@
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+import { ComicCard } from "~/types";
+import { MANGA_PATH_NAME, MANGA_PATH_DETAILS_NAME } from "~/constants";
+import ImageWrapper from "./ImageWrapper";
+type Props = {
+  comic: ComicCard;
+};
+
+const SwiperCard = ({ comic }: Props) => {
+  return (
+    <>
+      <div className="aspect-h-4 aspect-w-3 rounded-xl overflow-hidden  relative">
+        <Link
+          href={`${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
+          className="block absolute"
+        >
+          <ImageWrapper>
+            <Image
+              src={comic.image as string}
+              alt=""
+              fill
+              className="absolute object-cover top-0 left-0 rounded-xl  object-center block hover:scale-110 transition duration-400"
+            />
+          </ImageWrapper>
+          <div className="absolute bottom-1 left-1 md:top-3 md:left-3 backdrop-blur-2xl  bg-slate-400/25 w-fit h-fit text-center flex justify-center rounded-xl">
+            <p className="flex items-center whitespace-nowrap text-sm px-2 py-1 max-w-[95px] truncate md:max-w-none">
+              {comic.newChap}
+            </p>
+          </div>
+        </Link>
+      </div>
+      <Link
+        href={`${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
+        className="block bottom-0"
+      >
+        <h2 className="hover:text-red-400 absolute w-full truncate text-xs text-black md:text-lg max-w-[200px] dark:text-white">
+          {comic.name}
+        </h2>
+      </Link>
+    </>
+  );
+};
+
+export default React.memo(SwiperCard);
