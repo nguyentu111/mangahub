@@ -1,25 +1,17 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
-import Skeleton from "react-loading-skeleton";
-import { ParsedUrlQuery } from "querystring";
-import ImageWrapper from "~/components/shared/ImageWrapper";
-import { axiosClient } from "~/services/axiosClient";
-import { Comic } from "~/types";
 import Image from "next/image";
 import Link from "next/link";
-import Head from "~/components/shared/Head";
+import { ParsedUrlQuery } from "querystring";
+import Skeleton from "react-loading-skeleton";
 import DetailsInfo from "~/components/shared/DetailsInfo";
+import Head from "~/components/shared/Head";
+import { axiosClient } from "~/services/axiosClient";
+import { Comic } from "~/types";
 
-import ClientOnly from "~/components/shared/ClientOnly";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { MANGA_PATH_NAME, MANGA_PATH_READ_NAME } from "~/constants";
-import { followModal } from "~/atoms";
-import { useAtom, useAtomValue } from "jotai";
-import { BellIcon, BookmarkIcon } from "@heroicons/react/24/outline";
-import dynamic from "next/dynamic";
-import toast, { Toaster } from "react-hot-toast";
-import { useSession } from "next-auth/react";
-import useFollow from "~/hooks/useFollow";
-import { useRouter } from "next/router";
+import { useTheme } from "~/context/themeContext";
 type Props = {
   comic: Comic;
 };
@@ -29,17 +21,9 @@ interface Params extends ParsedUrlQuery {
 
 const Details: NextPage<Props> = ({ comic }) => {
   const [hideSummary, setHideSummary] = useState(true);
-  const [followModalState, setFollowModel] = useAtom(followModal);
-  const { data: session, status } = useSession();
   const router = useRouter();
-  const [chapters, setChapters] = useState();
-  // comic?.chapters?.chapters_list[0].chapters || []
+  const [theme] = useTheme();
   // @ts-ignore
-  const userId = session?.user?.id;
-  const { add } = useFollow();
-  // console.log({ userId });
-  const handleAddFollow = async () =>
-    console.log(await add(userId, comic.slug, comic));
   return (
     <>
       <Head
@@ -47,30 +31,51 @@ const Details: NextPage<Props> = ({ comic }) => {
         description={`${comic?.summary}`}
       />
       {/* <ClientOnly> */}
-      <div className="pt-20 dark:bg-[url('/static/media/landing_page_bg.png')] bg-no-repeat  bg-cover pb-[40px] dark:text-white transition duration-300">
+      <div className="pt-20 dark:bg-[url('/static/media/landing_page_bg.png')] bg-no-repeat  bg-cover pb-[40px] dark:text-white transition duration-300 min-h-screen">
         <div className="flex flex-col w-[90%] max-w-[1300px] mx-auto justify-center items-center ">
           <div className="mt-10 w-full ">
-            <h1 className="text-2xl w-full text-center uppercase md:text-3xl">
-              {comic?.name}
-            </h1>
+            {router.isFallback ? (
+              <div className="w-[50%] mx-auto">
+                <Skeleton
+                  // inline={true}
+                  baseColor={theme === "dark" ? "#202020" : ""}
+                  highlightColor="#444"
+                  className="!w-full my-2 h-[30px] overflow-hidden mx-auto"
+                />
+              </div>
+            ) : (
+              <h1 className="text-2xl w-full text-center uppercase md:text-3xl">
+                {comic?.name}
+              </h1>
+            )}
 
-            <div className=" m-auto text-center text-gray-500">{`[ Cập nhật lúc ${
-              comic?.statisticValue && comic?.statisticValue[0].value
-            } ]`}</div>
+            {router.isFallback ? (
+              <div className="w-[40%] mx-auto">
+                <Skeleton
+                  baseColor={theme === "dark" ? "#202020" : ""}
+                  highlightColor="#444"
+                  className="!w-full my-2 h-[20px] overflow-hidden mx-auto"
+                />
+              </div>
+            ) : (
+              <div className=" m-auto text-center text-gray-500">{`[ Cập nhật lúc ${
+                comic?.statisticValue && comic?.statisticValue[0].value
+              } ]`}</div>
+            )}
 
             <div className="flex flex-col gap-8 md:gap-10">
               <div className="flex flex-col items-center sm:items-start sm:grid sm:grid-cols-4 gap-[20px] mt-8">
-                <div className="col-span-1 mt-4 w-[50%] md:w-[250px] md:min-w-[250px]">
+                <div className="col-span-1 w-[200px] sm:w-full">
                   {router.isFallback ? (
-                    <Skeleton
-                      inline={true}
-                      baseColor="#202020"
-                      highlightColor="#444"
-                      className="aspect-w-3 aspect-h-5 relative"
-                      style={{
-                        borderRadius: "2%",
-                      }}
-                    />
+                    <div className="aspect-w-3 aspect-h-4 relative rounded-2xl">
+                      {/* <Skeleton
+                        // inline={true}
+                        baseColor={theme === "dark" ? "#202020" : ""}
+                        highlightColor="#444"
+                        className="!w-full my-2 h-full overflow-hidden mx-auto"
+                      /> */}
+                      <Image src="/static/media/lazy_loading.gif" alt="" fill />
+                    </div>
                   ) : (
                     <figure className="aspect-w-3 aspect-h-5 relative rounded-2xl">
                       <Image

@@ -1,4 +1,4 @@
-import "../styles/globals.css";
+import "../styles/globals.scss";
 import "nprogress/nprogress.css";
 import NProgress from "nprogress";
 import type { AppProps } from "next/app";
@@ -33,7 +33,6 @@ export default function App({
     Component.getLayout ?? ((page) => <MainLayout>{page}</MainLayout>);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [_, setIsSupportedSW] = useLocalStorage("supportSW", false);
-
   useEffectOnce(() => {
     if (!("serviceWorker" in navigator)) {
       console.error("No Service Worker support!");
@@ -46,15 +45,13 @@ export default function App({
     }
 
     setIsSupportedSW(true);
-
     (async function () {
       const subscription = await register();
       if (!subscription) return;
 
       const parsed = JSON.parse(JSON.stringify(subscription));
-
       const { expirationTime, ...rest } = parsed;
-      console.log({ rest });
+
       setSubscription(rest);
     })();
   });

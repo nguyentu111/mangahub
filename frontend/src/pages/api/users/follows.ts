@@ -1,27 +1,20 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "~/serverless/utils/connectdb";
-
+import { Db } from "mongodb";
 const follows = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method, query } = req;
+  const { method } = req;
   const { userid } = req.headers;
-  const { db } = await connectToDatabase();
+  const { db }: { db: Db } = await connectToDatabase();
 
   switch (method) {
     case "GET":
-      const { status } = query;
-
       const data = await db
         .collection("watchlists")
-        .find({ userId: userid, status })
-        .sort({ createdAt: -1 })
-        .toArray();
+        .findOne({ userId: userid });
 
       if (!data) return res.status(404).json({ message: "items not found" });
 
-      res.status(200).json({
-        success: true,
-        data,
-      });
+      res.status(200).json(data);
       break;
   }
 };

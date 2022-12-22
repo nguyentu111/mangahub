@@ -1,5 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 import React from "react";
 import { useLocalStorage } from "usehooks-ts";
@@ -26,22 +27,26 @@ interface ReadPageProps {
 }
 
 const ReadPage = ({ data }: Props) => {
-  const { chapter, comicSlug, pages } = data;
+  // const { chapter, comicSlug, pages } = data;
+  const { isFallback } = useRouter();
+
   return (
-    <div className="dark:bg-[url('/static/media/landing_page_bg.png')] bg-cover  pt-20">
+    <div className="dark:bg-[url('/static/media/landing_page_bg.png')] bg-cover  pt-20 min-h-screen">
       <div className="w-[90%] max-w-[1300px] mx-auto ">
-        <Head title={chapter + " | Manga hub"} />
+        {!isFallback && <Head title={data?.chapter + " | Manga hub"} />}
         <div className="mt-24">
-          {pages?.map((image) => (
-            <div key={image.id} className="mx-auto ">
-              {/*  eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={image.src}
-                alt="image"
-                className="mx-auto max-w-[100%]"
-              />
-            </div>
-          ))}
+          {isFallback
+            ? "loading ..."
+            : data?.pages?.map((image) => (
+                <div key={image.id} className="mx-auto ">
+                  {/*  eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={image.src}
+                    alt="image"
+                    className="mx-auto max-w-[100%]"
+                  />
+                </div>
+              ))}
         </div>
       </div>
     </div>
@@ -55,17 +60,24 @@ export const getStaticPaths: GetStaticPaths<Params> = async () => {
 
 // `getStaticPaths` requires using `getStaticProps`
 export const getStaticProps: GetStaticProps = async (context) => {
-  const {
-    slug: [mangaSlug, chapterSlug],
-  } = context.params as Params;
-  const { data }: { data: ReadPageProps } = await axiosClient.get(
-    "lhmanga/comic/" + mangaSlug + "/" + chapterSlug
-  );
-  if (!data)
-    return {
-      notFound: true,
-    };
-  return {
-    props: { data },
-  };
+  try {
+    const {
+      slug: [mangaSlug, chapterSlug],
+    } = context.params as Params;
+    const { data } = await axiosClient.get(
+      "lhmanga/comic/" + mangaSlug + "/" + chapterSlug
+    );
+    if (!data)
+      return {
+        notFound: true,
+      };
+    else {
+      return {
+        props: { data },
+        revalidate: 5 * 60 * 60,
+      };
+    }
+  } catch (err) {
+    return { notFound: true };
+  }
 };

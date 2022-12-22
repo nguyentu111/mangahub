@@ -14,6 +14,6 @@ export const register = async () => {
 
     return subscription;
   } catch (error) {
-    console.error(error);
+    console.log("register service worker failed ::", error);
   }
 };

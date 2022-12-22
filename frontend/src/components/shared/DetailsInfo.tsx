@@ -1,3 +1,4 @@
+import "react-loading-skeleton/dist/skeleton.css";
 import { useSetAtom } from "jotai";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -24,7 +25,13 @@ import {
   BookmarkIcon,
   BookOpenIcon,
 } from "@heroicons/react/24/outline";
-import { BellIcon as BellIconSolid, BoltIcon } from "@heroicons/react/24/solid";
+import {
+  BellIcon as BellIconSolid,
+  BookmarkIcon as BookmarkIconSolid,
+} from "@heroicons/react/24/solid";
+import useFollow from "~/hooks/useFollow";
+import { fork } from "child_process";
+import { useTheme } from "~/context/themeContext";
 
 interface DetailsInfoProps {
   manga: Comic;
@@ -37,20 +44,15 @@ interface DetailsInfoProps {
 function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
   const router = useRouter();
   const notification = useNotification();
+  const follow = useFollow();
   const { data: session, status } = useSession();
   // const setShowModal = useSetAtom(followModal);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isFollowed, setIsFollowed] = useState(false);
   const lastChapSlug = manga?.chapters[0].slug;
   const firstChapSlug = manga?.chapters[manga.chapters.length - 1].slug;
+  const [theme] = useTheme();
   //   console.log({ firstChapSlug, lastChapSlug });
-  const handleShowFollowModal = () => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-      return;
-    }
-
-    // setShowModal(true);
-  };
 
   const handleTurnOnNotification = async () => {
     const response = await notification.subscribe(manga?.slug);
@@ -93,14 +95,29 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
         setIsSubscribed(false);
         break;
       case "error":
-        toast.error("Có gì đó không đúng?, Vui lòng thử lại!", {
+        toast.error("Có gì đó không đúng?, Vui lòng thử lại", {
           duration: 3000,
           style: { zIndex: 899 },
         });
         break;
     }
   };
-
+  const handleFollow = async () => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+      return;
+    }
+    if (isFollowed) {
+      const res = await follow._delete(manga?.slug);
+      if (res) toast.success("Bỏ lưu thành công");
+      else toast.error("Có gì đó không ổn, hãy thử lại sau!");
+    } else {
+      const res = await follow.add(manga?.slug);
+      if (res) toast.success("Lưu truyện thành công");
+      else toast.error("Có gì đó không ổn, hãy thử lại sau!");
+    }
+    setIsFollowed(!isFollowed);
+  };
   useEffect(() => {
     if (manga?.slug) {
       (async function () {
@@ -110,7 +127,16 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
         }
       })();
     }
-
+    // @ts-ignore
+    if (manga?.slug && session?.user?.id) {
+      (async function () {
+        // @ts-ignore
+        const res = await follow.get(manga?.slug);
+        if (res === "followed") {
+          setIsFollowed(true);
+        }
+      })();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, manga?.slug]);
 
@@ -128,38 +154,38 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
 
   return (
     <>
-      <div className="col-span-3 flex h-full w-full flex-col items-center overflow-x-hidden md:flex-row md:items-start">
+      <div className="text-black col-span-3 flex h-full w-full flex-col items-center overflow-x-hidden md:flex-row md:items-start  dark:text-white">
         <Toaster position="bottom-center" reverseOrder={false} />
 
         {/* manga desc*/}
-        <div className="flex h-full w-full flex-col justify-center p-4  text-white md:min-h-[430px] lg:ml-4">
-          <div className="w-full space-y-4 text-center md:ml-2 md:text-left lg:w-[80%]">
+        <div className="flex h-full w-full flex-col  p-2 md:min-h-[430px] lg:ml-4  ">
+          <div className=" w-full space-y-4  md:ml-2 md:text-left lg:w-[80%]">
             {isLoading ? (
               <>
                 <Skeleton
                   inline={true}
-                  baseColor="#202020"
+                  baseColor={theme === "dark" ? "#202020" : ""}
                   highlightColor="#444"
-                  className="my-2 h-[35px] overflow-hidden"
+                  className="my-2 h-[30px] overflow-hidden"
                 />
                 <Skeleton
-                  inline={true}
-                  baseColor="#202020"
+                  // inline={true}
+                  baseColor={theme === "dark" ? "#202020" : ""}
                   highlightColor="#444"
-                  className="my-2 max-w-[50%] md:min-h-[28px]"
+                  className="my-2 max-w-[70%] md:min-h-[32px]"
                 />
                 <Skeleton
-                  inline={true}
-                  baseColor="#202020"
+                  // inline={true}
+                  baseColor={theme === "dark" ? "#202020" : ""}
                   highlightColor="#444"
-                  className="my-2 max-w-[30%] md:min-h-[28px]"
+                  className="my-2 max-w-[50%] md:min-h-[32px]"
                 />
 
                 <Skeleton
                   inline={true}
-                  baseColor="#202020"
+                  baseColor={theme === "dark" ? "#202020" : ""}
                   highlightColor="#444"
-                  className="my-2 max-w-[25%] md:min-h-[28px]"
+                  className="my-2 max-w-[25%] md:min-h-[32px]"
                 />
               </>
             ) : (
@@ -181,7 +207,7 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
                   </h2> */}
                 {manga?.otherName &&
                   manga?.otherName?.map((v, idx) => (
-                    <div key={idx}>
+                    <div key={idx} className="flex gap-3">
                       <span className="font-bold">Tên khác: </span>{" "}
                       <span>{v.label}</span>
                       {/* @ts-ignore */}
@@ -225,7 +251,7 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
                 )}
                 {manga?.status &&
                   manga.status.map((v, idx) => (
-                    <div key={idx}>
+                    <div key={idx} className="flex gap-3">
                       <span className="font-bold">Trạng thái: </span>
                       <Link href={v.link as string} className="">
                         <span className="cursor-pointer hover:text-red-500">
@@ -264,93 +290,78 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
               </>
             )}
           </div>
-          <div className="mt-4 flex flex-col-reverse gap-2 md:flex-col">
-            {isLoading ? (
-              <Skeleton
-                inline={true}
-                baseColor="#202020"
-                highlightColor="#444"
-                className="my-4 max-w-[80%] md:min-h-[50px]"
-              />
-            ) : (
-              <ul className="my-4 flex flex-wrap items-center gap-4">
-                {/* <h3 className="px-2 py-2">Thể loại:</h3>
-                  {manga?.genres.length &&
-                    manga?.genres.map((genre) => {
-                      if (!genre) return;
-    
-                      return (
-                        <li
-                          key={genre._id}
-                          className="rounded-xl bg-highlight px-4 py-2"
-                        >
-                          <Link
-                            href={{
-                              pathname: `/${MANGA_BROWSE_PAGE}`,
-                              query: {
-                                [convertQuery(genre?.label)]: genre?.value,
-                              },
-                            }}
-                          >
-                            <a>{genre?.label}</a>
-                          </Link>
-                        </li>
-                      );
-                    })} */}
-              </ul>
-            )}
-
+          <div className="mt-4 flex flex-col sm:flex-row gap-2 md:flex-col">
             {/* manga interrace  */}
-            <div className="my-6 flex h-[150px] w-full flex-col items-center gap-6 md:my-0 md:flex-row md:items-start">
-              {manga?.chapters ? (
-                <>
-                  <Link
-                    href={`/${MANGA_PATH_NAME}/${MANGA_PATH_READ_NAME}/${firstChapSlug}`}
-                  >
-                    <button className="pulse-effect-primary absolute-center h-[50px] w-[150px] gap-3 rounded-2xl bg-primary transition-all hover:scale-[110%]">
-                      <BookOpenIcon className="h-8 w-8" /> Đọc ngay
-                    </button>
-                  </Link>
-
-                  <Link
-                    href={`/${MANGA_PATH_NAME}/${MANGA_PATH_READ_NAME}/${lastChapSlug}`}
-                  >
-                    <button className="pulse-effect-secondary absolute-center h-[50px] w-[150px] gap-3 rounded-2xl bg-white text-gray-800 transition-all hover:scale-[110%]">
-                      <BoltIcon className="h-8 w-8 text-primary" /> Chap mới
-                      nhất
-                    </button>
-                  </Link>
-                </>
+            <div className="flex w-full flex-col sm:flex-row items-center  gap-6 md:my-0 md:flex-row md:items-start">
+              {isLoading ? (
+                <div className="flex flex-col ssm:flex-row w-full items-center justify-evenly">
+                  <div className="w-[124px] h-[44px] my-2 rounded-2xl">
+                    <Skeleton
+                      baseColor={theme === "dark" ? "#202020" : ""}
+                      highlightColor="#444"
+                      className="w-full h-full"
+                    />
+                  </div>
+                  <div className="w-[124px] h-[44px] my-2 rounded-2xl">
+                    <Skeleton
+                      baseColor={theme === "dark" ? "#202020" : ""}
+                      highlightColor="#444"
+                      className="w-full h-full"
+                    />
+                  </div>
+                </div>
               ) : (
-                <>
-                  <div className="absolute-center loading-pulse h-[50px] min-h-[50px] w-[150px] rounded-2xl bg-white/20"></div>
+                manga?.chapters && (
+                  <div className="flex flex-col ssm:flex-row justify-between items-center gap-5">
+                    <Link
+                      href={`/${MANGA_PATH_NAME}/${MANGA_PATH_READ_NAME}/${manga.slug}/${lastChapSlug}`}
+                    >
+                      <button className="items-center border-2  px-2 py-2 hover:scale-105 rounded-xl border-black dark:border-white ">
+                        Chap mới nhất
+                      </button>
+                    </Link>
 
-                  <div className="absolute-center loading-pulse h-[50px] min-h-[50px] w-[150px] rounded-2xl bg-white/20"></div>
-                </>
+                    <Link
+                      href={`/${MANGA_PATH_NAME}/${MANGA_PATH_READ_NAME}/${manga.slug}/${firstChapSlug}`}
+                    >
+                      <button className="items-center border-2 px-2 py-2 hover:scale-105 rounded-xl border-black dark:border-white ">
+                        Đọc ngay
+                      </button>
+                    </Link>
+                  </div>
+                )
               )}
 
-              <div className="flex w-fit space-x-2">
-                <button
-                  onClick={handleShowFollowModal}
-                  className="shine-effect absolute-center bg-hight-light h-[50px] w-[50px] rounded-xl transition-all hover:text-primary"
-                >
-                  <BookmarkIcon className="h-8 w-8" />
-                </button>
+              <div className="flex w-fit gap-6">
+                {!isLoading && (
+                  <>
+                    <button
+                      onClick={handleFollow}
+                      className="flex items-centers bg-hight-light p-2 rounded-xl transition-all "
+                    >
+                      {isFollowed ? (
+                        <BookmarkIconSolid className="w-8 h-8 self-center " />
+                      ) : (
+                        <BookmarkIcon className="w-8 h-8 self-center " />
+                      )}
+                    </button>
 
-                <button
-                  onClick={
-                    isSubscribed
-                      ? handleTurnOffNotification
-                      : handleTurnOnNotification
-                  }
-                  className="absolute-center bg-hight-light h-[50px] w-[50px] rounded-xl transition-all hover:text-primary"
-                >
-                  {isSubscribed ? (
-                    <BellIconSolid className="animate__animated animate__faster animate__heartBeat h-8 w-8 text-primary" />
-                  ) : (
-                    <BellIcon className="animate__animated animate__faster animate__heartBeat h-8 w-8" />
-                  )}
-                </button>
+                    <button
+                      onClick={
+                        isSubscribed
+                          ? handleTurnOffNotification
+                          : handleTurnOnNotification
+                      }
+                      className="absolute-center bg-hight-light p-2 rounded-xl transition-all hover:text-primary "
+                    >
+                      {isSubscribed ? (
+                        <BellIconSolid className="animate__animated animate__faster animate__heartBeat h-8 w-8 text-red-500" />
+                      ) : (
+                        <BellIcon className="animate__animated animate__faster animate__heartBeat h-8 w-8" />
+                      )}
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>

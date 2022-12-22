@@ -5,15 +5,12 @@ import { config } from "dotenv";
 import Subscriber from "../models/Subscriber.model";
 import lhModel from "../models/LhModel";
 import { isEmptyObject } from "../utils";
-
-// const baseUrl = process.env.NT_SOURCE_URL as string;
-// const Nt = NtModel.Instance(baseUrl);
 config();
 const lh = lhModel();
+const FE_URL = process.env.FE_URL as string;
+if (FE_URL) console.log(`Pussing for url: ${FE_URL}`);
+else console.log("missing FE_URL");
 export default function webPushController() {
-  const FE_URL = process.env.FE_URL as string;
-  if (FE_URL) console.log(`Pussing for url: ${FE_URL}`);
-  else console.log("missing FE_URL");
   return {
     info: async (req: Request, res: Response, next: NextFunction) => {
       const { comicSlug, userId } = req.body;
@@ -45,6 +42,7 @@ export default function webPushController() {
 
     subscribe: async (req: Request, res: Response, next: NextFunction) => {
       const { userId, comicSlug, endpoint, p256dh, auth } = req.body;
+      console.log({ userId, comicSlug, endpoint, p256dh, auth });
       //validate body
       if (!userId || !comicSlug || !endpoint || !p256dh || !auth) {
         return res.status(400).json({
@@ -57,6 +55,7 @@ export default function webPushController() {
         userId,
         identifications: { $elemMatch: { endpoint, p256dh, auth } },
       });
+      console.log({ existingIdentifications });
       //check exist comic in db:
       // const existingComic = await Comic.findById(comicId);
 
@@ -323,50 +322,6 @@ export default function webPushController() {
           }[];
         }[]
       );
-
-      // try {
-      //   await webPush.sendNotification(
-      //     {
-      //       endpoint:
-      //         "https://wns2-pn1p.notify.windows.com/w/?token=BQYAAAB%2fSBbw%2bovwyDty8BEZfqrmf3FSONB1RbWy9oBiSaUfn%2bqr%2ffrEXkBvQtQC3jAfeq9GEChGW4Pj%2fYPWVDtsThEs6Cgafr58wBMJQh0f8HouaSnXEfF5885W8LSTIT%2fboWhDqyhU64XgBS3EobmQo8G2G8Xr%2bQt3cnXX1pGLyr9RdcsEg25bIcpymvM%2b1gmMLmIYrBXtgyPemxifOwvLTlc0CFws7IGr9ZiqHNsQP%2bTkbP8Z7SFug9rtvpk7upVfam0ZCwdSwwTwIK%2fpgEav4b%2b7c%2fPJphn2dAUoPocgU2%2b5qANJ1glahr26jrmXIr2dhYo%3d",
-      //       keys: {
-      //         auth: "FRL0JGFzDKF4uzc7aGiccA",
-      //         p256dh:
-      //           "BIF1SqHhQ5gpQTVMFEvP1vTPTV6RL3KNlCBNWkANVkLnhBx2ATwsvPBDjvMWW33v8GymttDUspTIJlQZf7i-2dY",
-      //       },
-      //     },
-      //     JSON.stringify({
-      //       title: `SILENT MIYASHITA-SAN'S SEXY CHANNEL đã có chap mới`,
-      //       body: "đọc ngay chap 112",
-      //       // badge:
-      //       //   "",
-      //       // icon: "https://res.cloudinary.com/lee1002/image/upload/v1658088029/personal/xykwxyxuhnmpg3nxgvrv.png",
-      //       image:
-      //         "https://www.truyentranhlh.net/storage/images/raw/b8298c80-82d5-4418-b45a-63c1c4ae20a2.jpg",
-      //       data: {
-      //         url: `${FE_URL}/comic/details/${gruop[0].comicSlug}`,
-      //       },
-      //     })
-      //   );
-      // } catch (er) {
-      //   if (
-      //     error?.body?.includes("expire") ||
-      //     error?.body?.includes("unsubscribe")
-      //   ) {
-      //     console.log(":: ", error);
-
-      //     await Subscriber.deleteOne({
-      //       identifications: {
-      //         $elemMatch: {
-      //           endpoint: sub?.endpoint,
-      //           p256dh: sub?.p256dh,
-      //           auth: sub?.auth,
-      //         },
-      //       },
-      //     });
-      //   }
-      // }
-
       await Promise.allSettled(
         grouped.map(async (item) => {
           try {
@@ -407,14 +362,14 @@ export default function webPushController() {
                         },
                       },
                       JSON.stringify({
-                        title: `${existingComic?.title} đã có chap mới`,
+                        title: `${existingComic?.name} đã có chap mới`,
                         body: existingComic?.chapters[0].title,
                         // badge:
                         //   "https://res.cloudinary.com/lee1002/image/upload/v1658088029/personal/xykwxyxuhnmpg3nxgvrv.png",
                         // icon: "https://res.cloudinary.com/lee1002/image/upload/v1658088029/personal/xykwxyxuhnmpg3nxgvrv.png",
                         image: existingComic?.image,
                         data: {
-                          url: `${FE_URL}/comic/details/${item.comicId}`,
+                          url: `${FE_URL}/comic/details/${item.comicSlug}`,
                         },
                       })
                     );
@@ -425,15 +380,28 @@ export default function webPushController() {
                     ) {
                       console.log(":: ", error);
 
-                      await Subscriber.deleteOne({
-                        identifications: {
-                          $elemMatch: {
-                            endpoint: sub?.endpoint,
-                            p256dh: sub?.p256dh,
-                            auth: sub?.auth,
+                      await Subscriber.updateOne(
+                        {
+                          identifications: {
+                            $elemMatch: {
+                              endpoint: sub?.endpoint,
+                              p256dh: sub?.p256dh,
+                              auth: sub?.auth,
+                            },
                           },
                         },
-                      });
+                        {
+                          $pull: {
+                            identifications: {
+                              $elemMatch: {
+                                endpoint: sub?.endpoint,
+                                p256dh: sub?.p256dh,
+                                auth: sub?.auth,
+                              },
+                            },
+                          },
+                        }
+                      );
                     }
                   }
                 })

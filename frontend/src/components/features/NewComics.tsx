@@ -8,10 +8,12 @@ import ImageWrapper from "../shared/ImageWrapper";
 type Props = {};
 
 const NewComics = ({ comics }: { comics: INewComics }) => {
-  console.log({ comics });
   return (
     <>
-      <div className="grid grid-cols-1 ssm:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-2 gap-y-6  overflow-hidden ">
+      <div
+        className="grid grid-cols-1 ssm:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 
+      lg:grid-cols-6 gap-x-2 gap-y-6  overflow-hidden transition-all duration-300 "
+      >
         {comics.data.map((comic, key) => (
           <div
             key={key}

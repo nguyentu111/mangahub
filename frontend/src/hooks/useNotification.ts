@@ -12,7 +12,6 @@ export default function useNotification() {
 
   return {
     info: async (comicSlug: string) => {
-      console.log();
       try {
         const res = await (
           await axiosClient.post("notify/info", {
@@ -40,6 +39,9 @@ export default function useNotification() {
       if (Notification.permission !== "granted") {
         const result = await Notification.requestPermission();
         if (result !== "granted") return "permission_denied";
+        else {
+          //add identification to db here
+        }
       }
 
       try {

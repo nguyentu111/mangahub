@@ -1,35 +1,39 @@
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import { Comic } from "~/types";
 
 export default function useFollow() {
-  const add = async (userId: string, mangaSlug: string, manga: Comic) => {
+  const { data: session, status } = useSession();
+  //@ts-ignore
+  const userId = session?.user?.id as string;
+  const add = async (mangaSlug: string) => {
     try {
       await axios.post(`/api/follow/${mangaSlug}`, {
         userId,
-        manga,
       });
 
       return true;
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       return false;
     }
   };
 
-  const get = async (userId: string, mangaTitle: string) => {
+  const get = async (mangaSlug: string) => {
     try {
       const response = await axios.get(
-        `/api/follow/${mangaTitle}?userId=${userId}`
+        `/api/follow/${mangaSlug}?userId=${userId}`
       );
-      return response.data;
+      if (response.data) return "followed";
     } catch (err) {
       console.error(err);
+      return "notfollowed";
     }
   };
 
-  const _delete = async (userId: string, mangaTitle: string) => {
+  const _delete = async (mangaSlug: string) => {
     try {
-      await axios.delete(`/api/follow/${mangaTitle}?userId=${userId}`);
+      await axios.delete(`/api/follow/${mangaSlug}?userId=${userId}`);
       return true;
     } catch (err) {
       console.error(err);
