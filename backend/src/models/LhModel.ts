@@ -121,10 +121,9 @@ export default function lhModel() {
       return [];
     }
   };
-  const getComic = async (
-    slug: string,
-    path: string = "/lhmanga/comic/"
-  ): Promise<Comic | null> => {
+  const getComic = async (slug: string): Promise<Comic | null> => {
+    const path: string = baseUrl + "/lhmanga/comic/" + slug + "/";
+
     try {
       const { data } = await axios.get(lhUrl + "/truyen-tranh/" + slug);
       const $ = cherrio.load(data);
@@ -144,22 +143,35 @@ export default function lhModel() {
           | {
               label: string;
               link: string;
+              slug: string;
             }[] = [];
-        name === "Thể loại:"
-          ? $(this)
-              .find(".info-value > a")
-              .each(function () {
-                const label = $(this).text() as string;
-                const link = $(this).attr("href") as string;
-                value.push({ link, label });
-              })
-          : $(this)
-              .find(".info-value")
-              .each(function () {
-                const label = $(this).text() as string;
-                const link = $(this).find("a").attr("href") as string;
-                value.push({ link, label });
-              });
+        if (name === "Thể loại:") {
+          $(this)
+            .find(".info-value > a")
+            .each(function () {
+              const label = $(this).text() as string;
+              const link = $(this).attr("href") as string;
+              const slug = link.split("the-loai/")[1] as string;
+              value.push({ link, label, slug });
+            });
+        } else if (name === "Tác giả:")
+          $(this)
+            .find(".info-value")
+            .each(function () {
+              const label = $(this).text() as string;
+              const link = $(this).find("a").attr("href") as string;
+              const slug = link?.split("tac-gia/")[1] as string;
+              value.push({ link, label, slug });
+            });
+        else
+          $(this)
+            .find(".info-value")
+            .each(function () {
+              const label = $(this).text() as string;
+              const link = $(this).find("a").attr("href") as string;
+              const slug = link?.split(".net/")[1] as string;
+              value.push({ link, label, slug });
+            });
 
         switch (name) {
           case "Tên khác:":
@@ -189,11 +201,7 @@ export default function lhModel() {
       const chapters: Comic["chapters"] = [];
       $(".list-chapters.at-series > a").each(function () {
         chapters.push({
-          link:
-            baseUrl +
-            path +
-            "/" +
-            ($(this).attr("href") as string).split(slug + "/")[1],
+          link: path + ($(this).attr("href") as string).split(slug + "/")[1],
           title: $(this).find(".chapter-name").text() as string,
           time: $(this).find(".chapter-time").text() as string,
           slug: ($(this).attr("href") as string).split(slug + "/")[1] as string,

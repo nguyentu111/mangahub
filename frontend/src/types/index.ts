@@ -65,13 +65,16 @@ export interface Comic {
   genres?: {
     label: string;
     link: string;
+    slug: string;
   }[];
   author?: {
     label: string;
+    slug: string;
     link: string;
   }[];
   status?: {
     label: string;
+    slug: string;
     link: string;
   }[];
   statisticValue?: {

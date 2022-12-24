@@ -41,7 +41,7 @@ export const getComic = async (
   const { name } = req.params;
   const path = req.baseUrl + req.path;
   if (!name) return res.status(500).json({ message: "no name found" });
-  const comic = await lh.getComic(name, path);
+  const comic = await lh.getComic(name);
   if (!comic) return res.status(404).json({ message: "comic not found" });
   return res.status(200).json(comic);
 };
@@ -51,7 +51,7 @@ export const getChapter = async (
 ) => {
   const { name, chapter } = req.params;
   if (!name || !chapter)
-    return res.status(500).json({ message: "missing name or chapter" });
+    return res.status(400).json({ message: "missing name or chapter" });
   const data = await lh.getChapter(name, chapter);
   if (!data?.pages.length)
     return res.status(404).json({ message: "chapter not found" });

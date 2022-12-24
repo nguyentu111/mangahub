@@ -114,7 +114,7 @@ const Details: NextPage<Props> = ({ comic }) => {
                   <p
                     className={`text-lg md:text-xl   ${
                       hideSummary
-                        ? "!max-h-[100px]  md:max-h-[300px]  text-transparent bg-clip-text bg-gradient-to-b from-black to-white dark:from-white dark:to-slate-700 "
+                        ? "!max-h-[100px]  md:!max-h-[70px]  text-transparent bg-clip-text bg-gradient-to-b from-black to-white dark:from-white dark:to-slate-700 "
                         : ""
                     }`}
                   >

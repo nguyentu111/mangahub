@@ -26,20 +26,20 @@
   }
 }
 /* Chrome, Edge, and Safari */
-*::-webkit-scrollbar {
-  /* position: absolute; */
-  /* right: 0; */
-  width: 15px;
-}
+// *::-webkit-scrollbar {
+//   /* position: absolute; */
+//   /* right: 0; */
+//   width: 15px;
+// }
 
-*::-webkit-scrollbar-track {
-  @apply bg-slate-400;
-}
+// *::-webkit-scrollbar-track {
+//   @apply bg-slate-400;
+// }
 
-*::-webkit-scrollbar-thumb {
-  background-color: rgb(108, 104, 104);
-  border-radius: 14px;
-}
+// *::-webkit-scrollbar-thumb {
+//   background-color: rgb(108, 104, 104);
+//   border-radius: 14px;
+// }
 
 * {
   box-sizing: border-box;

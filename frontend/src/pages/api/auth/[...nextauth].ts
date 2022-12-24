@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import FacebookProvider from "next-auth/providers/facebook";
 import clientPromise from "~/serverless/libs/mongodb";
 
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";

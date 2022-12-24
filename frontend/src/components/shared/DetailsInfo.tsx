@@ -1,37 +1,23 @@
-import "react-loading-skeleton/dist/skeleton.css";
-import { useSetAtom } from "jotai";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useEffect, useMemo, useState } from "react";
+import { Fragment, memo, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import Skeleton from "react-loading-skeleton";
-// import { followModal } from '~/atoms/followModaAtom';
-import {
-  MANGA_BROWSE_PAGE,
-  MANGA_PATH_NAME,
-  MANGA_PATH_READ_NAME,
-  // PROXY_SERVER,
-  // SOURCE_COLLECTIONS,
-} from "~/constants";
+import "react-loading-skeleton/dist/skeleton.css";
+import { MANGA_PATH_NAME, MANGA_PATH_READ_NAME } from "~/constants";
 import useNotification from "~/hooks/useNotification";
-import { Chapter, ChapterDetails, Comic } from "~/types";
+import { Comic } from "~/types";
 // import { isExactMatch } from '~/utils/stringHandler';
 // import torriGate from '/public/images/torri-gate.jpg';
 
-import {
-  BellIcon,
-  BookmarkIcon,
-  BookOpenIcon,
-} from "@heroicons/react/24/outline";
+import { BellIcon, BookmarkIcon } from "@heroicons/react/24/outline";
 import {
   BellIcon as BellIconSolid,
   BookmarkIcon as BookmarkIconSolid,
 } from "@heroicons/react/24/solid";
-import useFollow from "~/hooks/useFollow";
-import { fork } from "child_process";
 import { useTheme } from "~/context/themeContext";
+import useFollow from "~/hooks/useFollow";
 
 interface DetailsInfoProps {
   manga: Comic;
@@ -46,7 +32,6 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
   const notification = useNotification();
   const follow = useFollow();
   const { data: session, status } = useSession();
-  // const setShowModal = useSetAtom(followModal);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isFollowed, setIsFollowed] = useState(false);
   const lastChapSlug = manga?.chapters[0].slug;
@@ -104,7 +89,8 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
   };
   const handleFollow = async () => {
     if (status === "unauthenticated") {
-      router.push("/login");
+      // router.push("/login");
+      toast.error("Đăng nhập để lưu truyện");
       return;
     }
     if (isFollowed) {
@@ -138,20 +124,15 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, manga?.slug]);
+  }, [session?.user?.email, manga?.slug]);
 
-  const convertQuery = (value: string) => {
-    switch (value?.toLowerCase()) {
-      case "manga":
-      case "manhua":
-      case "manhwa":
-      case "doujinshi":
-        return "mangas";
-      default:
-        return "genres";
+  const handleNotify = () => {
+    if (status === "unauthenticated") {
+      toast.error("Đăng nhập để bật thông báo");
+      return;
     }
+    isSubscribed ? handleTurnOffNotification : handleTurnOnNotification;
   };
-
   return (
     <>
       <div className="text-black col-span-3 flex h-full w-full flex-col items-center overflow-x-hidden md:flex-row md:items-start  dark:text-white">
@@ -190,43 +171,35 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
               </>
             ) : (
               <>
-                {/* <h1
-                    className={`font-secondary  font-bold leading-none ${
-                      manga.name.length < 40
-                        ? "text-[6.5vw] md:text-[5.5vw] lg:text-[3.5vw]"
-                        : "text-[5.5vw] md:text-[3.5vw] lg:text-[2.5vw]"
-                    }`}
-                  >
-                    {manga?.name}
-                  </h1>
-                  <div className=" m-auto text-center text-gray-500">{`[ Cập nhật lúc ${
-                    manga?.statisticValue && manga?.statisticValue[0].value
-                  } ]`}</div> */}
-                {/* <h2 className="text-[3vw] md:min-h-[28px] md:text-[2vw] lg:text-[1.2vw]">
-                  
-                  </h2> */}
-                {manga?.otherName &&
-                  manga?.otherName?.map((v, idx) => (
-                    <div key={idx} className="flex gap-3">
-                      <span className="font-bold">Tên khác: </span>{" "}
-                      <span>{v.label}</span>
-                      {/* @ts-ignore */}
-                      {idx !== manga.otherName?.length - 1 && " , "}
-                    </div>
-                  ))}
-                {manga?.author &&
-                  manga.author.map((v, idx) => (
-                    <div key={idx}>
-                      <span className="font-bold">Tác giả: </span>
-                      <Link href={v.link as string}>
-                        <span className="cursor-pointer hover:text-red-500">
-                          {v.label}
-                        </span>
-                      </Link>
-                      {/* @ts-ignore */}
-                      {idx !== manga.author?.length - 1 && " , "}
-                    </div>
-                  ))}
+                {manga?.otherName && (
+                  <>
+                    <span className="font-bold">Tên khác: </span>
+                    {manga?.otherName?.map((v, idx) => (
+                      <Fragment key={idx}>
+                        <span>{v.label}</span>
+                        {/* @ts-ignore */}
+                        {idx !== manga.otherName?.length - 1 && " , "}
+                      </Fragment>
+                    ))}
+                  </>
+                )}
+
+                {manga?.author && (
+                  <div className="flex flex-wrap">
+                    <span className="font-bold mr-2">Tác giả: </span>
+                    {manga.author.map((v, idx) => (
+                      <Fragment key={idx}>
+                        <Link href={v.link as string}>
+                          <span className="cursor-pointer hover:text-red-500">
+                            {v.label}
+                          </span>
+                        </Link>
+                        {/* @ts-ignore */}
+                        {idx !== manga.author?.length - 1 && " , "}
+                      </Fragment>
+                    ))}
+                  </div>
+                )}
 
                 {manga?.genres && (
                   <div className="flex flex-wrap">
@@ -249,44 +222,21 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
                     ))}
                   </div>
                 )}
-                {manga?.status &&
-                  manga.status.map((v, idx) => (
-                    <div key={idx} className="flex gap-3">
-                      <span className="font-bold">Trạng thái: </span>
-                      <Link href={v.link as string} className="">
-                        <span className="cursor-pointer hover:text-red-500">
-                          {v.label}
-                        </span>
-                      </Link>
-                      {idx !== (manga.status?.length as number) - 1 && " , "}
-                    </div>
-                  ))}
-                {/* {manga?.otherName && (
-                    <div>
-                      <span className="font-bold">Tên khác: </span>
-                      {manga?.otherName?.map((v, idx) => (
-                        <>
-                          {" "}
-                          <span>{v.label}</span>
-                          @ts-ignore
-                          {idx !== manga.otherName?.length - 1 && " , "}
-                        </>
-                      ))}
-                    </div>
-                  )}
-                  <h3 className="text-center text-[3vw] md:text-left md:text-[2vw] lg:text-[1.1vw]">
-                    {manga?.author !== "undefined" ? manga?.author : ""}
-                  </h3>
-                  <h4 className="flex items-center justify-center gap-4 md:justify-start">
-                    <span
-                      className={`block h-3 w-3 rounded-full ${
-                        manga?.status === "Đang tiến hành"
-                          ? "bg-green-500"
-                          : "bg-cyan-500"
-                      } `}
-                    ></span>
-                    {manga?.status}
-                  </h4> */}
+                {manga?.status && (
+                  <div className="flex gap-3">
+                    <span className="font-bold">Trạng thái: </span>
+                    {manga.status.map((v, idx) => (
+                      <>
+                        <Link href={v.link as string} className="">
+                          <span className="cursor-pointer hover:text-red-500">
+                            {v.label}
+                          </span>
+                        </Link>
+                        {idx !== (manga.status?.length as number) - 1 && " , "}
+                      </>
+                    ))}
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -347,11 +297,7 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
                     </button>
 
                     <button
-                      onClick={
-                        isSubscribed
-                          ? handleTurnOffNotification
-                          : handleTurnOnNotification
-                      }
+                      onClick={handleNotify}
                       className="absolute-center bg-hight-light p-2 rounded-xl transition-all hover:text-primary "
                     >
                       {isSubscribed ? (

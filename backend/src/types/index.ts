@@ -1,3 +1,5 @@
+import { BlobOptions } from "buffer";
+
 export interface IComic {
   status: string;
   author: string;
@@ -62,13 +64,16 @@ export interface Comic {
   genres?: {
     label: string;
     link: string;
+    slug: string;
   }[];
   author?: {
     label: string;
+    slug: string;
     link: string;
   }[];
   status?: {
     label: string;
+    slug: string;
     link: string;
   }[];
   statisticValue?: {
@@ -77,6 +82,9 @@ export interface Comic {
   }[];
   summary: string;
   chapters: { title: string; link: string; time: string; slug: string }[];
+}
+export interface extendedComic extends Comic {
+  readed?: string;
 }
 export interface Page_Image {
   id: string;
@@ -185,6 +193,10 @@ export interface ISubscriber {
   }[];
   createdAt: Date;
   updatedAt: Date;
+}
+export interface WatchList {
+  userId: string;
+  comics: { slug: string; readed?: string }[];
 }
 // export interface SelectType {
 //   value: string;

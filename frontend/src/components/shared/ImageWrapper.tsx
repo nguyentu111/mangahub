@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 
 interface ImageWrapperProps {
   children: ReactNode;
+  style?: string;
 }
 
 const variants: Variants = {
@@ -20,11 +21,14 @@ const variants: Variants = {
   },
 };
 
-export default function ImageWrapper({ children }: ImageWrapperProps) {
+export default function ImageWrapper({
+  children,
+  style = "",
+}: ImageWrapperProps) {
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        className="full-size relative overflow-hidden contents"
+        className={`full-size relative overflow-hidden ${style}`}
         variants={variants}
         animate="animate"
         exit="exit"
