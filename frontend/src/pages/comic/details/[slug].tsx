@@ -6,12 +6,14 @@ import Skeleton from "react-loading-skeleton";
 import DetailsInfo from "~/components/shared/DetailsInfo";
 import Head from "~/components/shared/Head";
 import { axiosClient } from "~/services/axiosClient";
-import { Comic } from "~/types";
+import { Comic, VistedComic } from "~/types";
 
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { MANGA_PATH_NAME, MANGA_PATH_READ_NAME } from "~/constants";
 import { useTheme } from "~/context/themeContext";
+import useFollow from "~/hooks/useFollow";
+import { useReadLocalStorage } from "usehooks-ts";
 type Props = {
   comic: Comic;
 };
@@ -23,6 +25,9 @@ const Details: NextPage<Props> = ({ comic }) => {
   const [hideSummary, setHideSummary] = useState(true);
   const router = useRouter();
   const [theme] = useTheme();
+  const visitedChapters = (
+    useReadLocalStorage("visited-comics") as VistedComic[]
+  )?.find((_comic) => _comic?.slug === comic?.slug)?.chapterSlug;
   // @ts-ignore
   return (
     <>
@@ -138,11 +143,19 @@ const Details: NextPage<Props> = ({ comic }) => {
                 <div className="flex flex-col gap-4">
                   <h3 className="font-bold">Danh sách chương</h3>
                   <div className=" ">
-                    {comic?.chapters.map((chap) => (
+                    {comic?.chapters.map((chap, index) => (
                       <Link
                         href={`/${MANGA_PATH_NAME}/${MANGA_PATH_READ_NAME}/${comic.slug}/${chap.slug}`}
-                        className="flex justify-between p-2 odd:bg-slate-100 even:bg-slate-300 hover:bg-slate-400
-                         dark:odd:bg-slate-500 dark:even:bg-transparent dark:hover:bg-slate-400 "
+                        className={`flex justify-between p-2  hover:bg-slate-400
+                          dark:bg-transparent dark:hover:bg-slate-400 border-b-[1px] 
+                           border-gray-400 dark:border-slate-500
+                          ${
+                            visitedChapters &&
+                            visitedChapters.find(
+                              (chapterSlug) => chapterSlug === chap.slug
+                            ) &&
+                            " text-gray-300 dark:text-slate-500"
+                          } `}
                         key={chap.link}
                       >
                         <span className="truncate">{chap.title}</span>

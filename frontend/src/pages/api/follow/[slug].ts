@@ -84,28 +84,44 @@ const follow = async (req: NextApiRequest, res: NextApiResponse) => {
       break;
     case "PUT":
       try {
-        // const collection = (await db
-        //   .collection("watchlists")
-        //   .findOne({ userId, "comics.slug": mangaSlug })) as WithId<Document>;
-        // collection.
-        // console.log({ mangaSlug });
-
-        const resp = await db.collection("watchlists").updateOne(
-          {
-            userId,
-            "comics.slug": mangaSlug,
-          },
-          {
-            $set: {
-              "comics.$.readed": body.lastChapterSlug,
+        if (body.chapterSlug) {
+          const resp = await db.collection("watchlists").updateOne(
+            {
+              userId,
+              "comics.slug": mangaSlug,
             },
-          }
-        );
+            {
+              $addToSet: {
+                "comics.$.readed": body.chapterSlug,
+              },
+              $set: {
+                "comics.$.lastTimeReaded": new Date().getTime(),
+              },
+            }
+          );
+          res.status(200).json({
+            success: true,
+            resp,
+          });
+        } else {
+          const resp = await db.collection("watchlists").updateOne(
+            {
+              userId,
+              "comics.slug": mangaSlug,
+            },
+            {
+              $set: {
+                "comics.$.lastTimeReaded": new Date().getTime(),
+              },
+            }
+          );
+          res.status(200).json({
+            success: true,
+            resp,
+          });
+        }
 
-        res.status(200).json({
-          success: true,
-          resp,
-        });
+        // }
       } catch (err) {
         console.log(err);
         res.status(500).json(err);

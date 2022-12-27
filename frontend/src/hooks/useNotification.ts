@@ -57,6 +57,7 @@ export default function useNotification() {
         return "success";
       } catch (err) {
         console.error("error subscribe:: ", err);
+        return "error";
       }
     },
 
@@ -65,7 +66,6 @@ export default function useNotification() {
         router.push("/login");
         return;
       }
-
       try {
         await axiosClient.delete(`notify/unsubscribe`, {
           data: {

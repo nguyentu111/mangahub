@@ -4,8 +4,7 @@ import "swiper/css/free-mode";
 import React from "react";
 import { Pagination, FreeMode, Autoplay, Mousewheel } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
-import LazyLoad from "react-lazy-load";
-import { Comic, ComicCard, HotComic } from "~/types";
+import { ComicCard } from "~/types";
 import SwiperCard from "./SwiperCard";
 type Props = {
   mangaList: ComicCard[];

@@ -1,3 +1,5 @@
+import formatDistance from "date-fns/formatDistance";
+import vi from "date-fns/locale/vi";
 import { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -21,7 +23,8 @@ import { CheckIcon, HeartIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { toast, Toaster } from "react-hot-toast";
 interface ExtendedComic extends Comic {
   unfollowed: boolean;
-  readed: string;
+  readed: string[];
+  lastTimeReaded: number;
 }
 interface ComicFollowed {
   data: {
@@ -57,8 +60,10 @@ const ComicFollowed: NextPage = () => {
         // setLoading(true);
       }
     })();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.user?.email]);
+
   const handleCheckReaded = async (
     slug: string,
     chapterSlug: string,
@@ -68,7 +73,7 @@ const ComicFollowed: NextPage = () => {
       const res = await follow.setReaded(slug, chapterSlug);
       if (res) {
         const newFollowed = { ...(followingComics as ComicFollowed) };
-        newFollowed.data.comics[index].readed = chapterSlug;
+        newFollowed.data.comics[index].readed.push(chapterSlug);
         setFollowingComics(newFollowed);
       } else if (!res) toast.error("Hệ thống đang có lỗi, hãy thử lại sau");
     } catch (e) {
@@ -155,6 +160,8 @@ const ComicFollowed: NextPage = () => {
                       <ImageWrapper>
                         <Image
                           src={comic.image}
+                          blurDataURL="/static/media/lazy_loading.gif"
+                          placeholder="blur"
                           alt=""
                           fill
                           className="object-cover"
@@ -170,7 +177,9 @@ const ComicFollowed: NextPage = () => {
                       {comic.name}
                     </Link>
                     <div className="flex flex-col md:flex-row md:gap-5 my-2">
-                      {comic.readed === comic.chapters[0].slug ? null : (
+                      {!!comic.readed?.find(
+                        (slug) => slug === comic.chapters[0].slug
+                      ) ? null : (
                         <span
                           className="flex items-center text-green-500 cursor-pointer w-fit text-sm"
                           onClick={() =>
@@ -205,14 +214,18 @@ const ComicFollowed: NextPage = () => {
                     </div>
                   </td>
                   <td className="p-2 text-sm text-gray-600 italic dark:text-gray-400">
-                    {"1 h truoc"}
+                    {comic.lastTimeReaded &&
+                      `${formatDistance(comic.lastTimeReaded, new Date(), {
+                        locale: vi,
+                      })} trước`}
                   </td>
                   <td className="p-2">
                     <Link
                       href={`${MANGA_PATH_NAME}/${MANGA_PATH_READ_NAME}/${comic.slug}/${comic.chapters[0].slug}`}
-                      className={`hover:text-blue-500 dark:text-white ${
-                        comic.readed === comic.chapters[0].slug &&
-                        "!text-gray-400"
+                      className={`hover:!text-blue-500 dark:text-white ${
+                        !!comic.readed?.find(
+                          (slug) => slug === comic.chapters[0].slug
+                        ) && "!text-gray-400"
                       }`}
                     >
                       {comic.chapters[0].title}

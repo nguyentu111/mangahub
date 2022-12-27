@@ -1,13 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { MANGA_PATH_DETAILS_NAME, MANGA_PATH_NAME } from "~/constants";
+import {
+  MANGA_PATH_DETAILS_NAME,
+  MANGA_PATH_NAME,
+  MANGA_PATH_READ_NAME,
+} from "~/constants";
 import { Comic, INewComics } from "~/types";
 import ImageWrapper from "../shared/ImageWrapper";
 
 type Props = {};
 
 const NewComics = ({ comics }: { comics: INewComics }) => {
+  console.log(comics);
   return (
     <div
       className="grid grid-cols-1 ssm:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 
@@ -27,6 +32,8 @@ const NewComics = ({ comics }: { comics: INewComics }) => {
                   src={comic.image as string}
                   alt=""
                   fill
+                  placeholder="blur"
+                  blurDataURL="/static/media/lazy_loading.gif"
                   className="absolute object-cover top-0 left-0   object-center block hover:scale-110 transition duration-400"
                 />
               </ImageWrapper>
@@ -39,7 +46,13 @@ const NewComics = ({ comics }: { comics: INewComics }) => {
               {comic.name}
             </h1>
           </Link>
-          <span className=" text-sm ">{comic.newChap}</span>
+          <span className=" text-sm ">
+            <Link
+              href={`${MANGA_PATH_NAME}/${MANGA_PATH_READ_NAME}/${comic.slug}/${comic.newChapSlug}`}
+            >
+              {comic.newChap}
+            </Link>
+          </span>
         </div>
       ))}
     </div>

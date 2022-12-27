@@ -5,7 +5,8 @@ const WatchList = new Schema({
   comics: [
     {
       slug: { type: String, required: true },
-      readed: { type: String, required: true },
+      readed: [{ type: String, required: true }],
+      lastTimeReaded: { type: Number, required: true },
     },
   ],
 });

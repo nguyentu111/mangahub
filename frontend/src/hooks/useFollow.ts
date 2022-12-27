@@ -59,12 +59,12 @@ export default function useFollow() {
       return false;
     }
   };
-  const setReaded = async (mangaSlug: string, lastChapterSlug: string) => {
+  const setReaded = async (mangaSlug: string, chapterSlug?: string) => {
     try {
       if (!userId) return false;
       await axios.put(`/api/follow/${mangaSlug}`, {
         userId,
-        lastChapterSlug,
+        chapterSlug,
       });
       return true;
     } catch (err) {

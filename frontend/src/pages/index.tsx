@@ -1,6 +1,7 @@
 import { Inter } from "@next/font/google";
 import axios from "axios";
 import { GetStaticProps } from "next";
+import Link from "next/link";
 import NewComics from "~/components/features/NewComics";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -30,6 +31,12 @@ export default function Home({ hotComics, newComics }: Props) {
           link={`/${MANGA_PATH_NAME}/${MANGA_BROWSE_PAGE}?sort=update`}
         >
           <NewComics comics={newComics} />
+          <Link
+            href="/browser?genre=top"
+            className="block ml-auto mr-10 p-4 dark:text-white"
+          >
+            Xem thêm
+          </Link>
         </Section>
       </div>
     </div>
@@ -37,8 +44,12 @@ export default function Home({ hotComics, newComics }: Props) {
 }
 export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
-    const { data: hotComics } = await axiosClient.get("/lhmanga/hot-comic");
-    const { data: newComics } = await axiosClient.get("/lhmanga");
+    // const { data: hotComics } = await axiosClient.get("/lhmanga/hot-comic");
+    // const { data: newComics } = await axiosClient.get("/lhmanga");
+    const [{ data: hotComics }, { data: newComics }] = await Promise.all([
+      axiosClient.get("/lhmanga/hot-comic"),
+      axiosClient.get("/lhmanga"),
+    ]);
     return {
       props: { hotComics, newComics },
     };

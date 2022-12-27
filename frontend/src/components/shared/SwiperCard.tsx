@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { memo } from "react";
 import { ComicCard } from "~/types";
 import { MANGA_PATH_NAME, MANGA_PATH_DETAILS_NAME } from "~/constants";
 import ImageWrapper from "./ImageWrapper";
@@ -19,6 +19,8 @@ const SwiperCard = ({ comic }: Props) => {
           <ImageWrapper>
             <Image
               src={comic.image as string}
+              blurDataURL="/static/media/lazy_loading.gif"
+              placeholder="blur"
               alt=""
               fill
               className="absolute object-cover top-0 left-0 rounded-xl  object-center block hover:scale-110 transition duration-400"
@@ -43,4 +45,4 @@ const SwiperCard = ({ comic }: Props) => {
   );
 };
 
-export default React.memo(SwiperCard);
+export default memo(SwiperCard);

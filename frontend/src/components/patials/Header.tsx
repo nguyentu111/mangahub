@@ -11,6 +11,7 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useLocalStorage } from "usehooks-ts";
 import { useTheme } from "~/context/themeContext";
+import Tippy from "@tippyjs/react/headless";
 type Props = {};
 
 const Header = (props: Props) => {
@@ -42,18 +43,52 @@ const Header = (props: Props) => {
               )}
             </button>
             {session?.user ? (
-              <div
-                className="w-10 h-10 relative flex items-center cursor-pointer"
-                onClick={() => signOut()}
+              <Tippy
+                interactive={true}
+                render={(attr) =>
+                  status === "authenticated" && (
+                    <div
+                      {...attr}
+                      className=" py-2  bg-white rounded-sm text-black"
+                    >
+                      <div className="flex flex-col ">
+                        <Link
+                          href="/history"
+                          className="p-2 hover:bg-gray-200 hover:text-purple-500"
+                        >
+                          Lịch sử đọc
+                        </Link>
+                        <Link
+                          href="/follows"
+                          className="p-2 hover:bg-gray-200 hover:text-purple-500"
+                        >
+                          Truyện theo dõi
+                        </Link>
+                        <button
+                          onClick={() => signOut()}
+                          className="border-t-[1px] border-gray-400 p-2 hover:bg-gray-200 hover:text-purple-500
+                          text-start"
+                        >
+                          Đăng xuất
+                        </button>
+                      </div>
+                    </div>
+                  )
+                }
               >
-                <Image
-                  unoptimized
-                  src={session?.user?.image as string}
-                  alt=""
-                  fill
-                  className="rounded-full"
-                />
-              </div>
+                <div
+                  className="w-10 h-10 relative flex items-center cursor-pointer"
+                  // onClick={() => signOut()}
+                >
+                  <Image
+                    unoptimized
+                    src={session?.user?.image as string}
+                    alt=""
+                    fill
+                    className="rounded-full"
+                  />
+                </div>
+              </Tippy>
             ) : (
               <Link href="/login" className="button_t1">
                 <UserCircleIcon className="w-5 h-5" />

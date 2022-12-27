@@ -43,13 +43,13 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
     const response = await notification.subscribe(manga?.slug);
     switch (response) {
       case "permission_denied":
-        toast.error("User-kun cần cấp quyền thông báo!", {
+        toast.error("Cần cấp quyền thông báo!", {
           duration: 2000,
           style: { zIndex: 899 },
         });
         break;
       case "unsupported_browser":
-        toast.error("Trình duyệt của user-kun không hỗ trợ thông báo!", {
+        toast.error("Trình duyệt của bạn không hỗ trợ thông báo!", {
           duration: 2000,
           style: { zIndex: 899 },
         });
@@ -68,7 +68,6 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
         });
     }
   };
-
   const handleTurnOffNotification = async () => {
     const response = await notification.unsubscribe(manga?.slug);
     switch (response) {
@@ -99,8 +98,10 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
       else toast.error("Có gì đó không ổn, hãy thử lại sau!");
     } else {
       const res = await follow.add(manga?.slug);
-      if (res) toast.success("Lưu truyện thành công");
-      else toast.error("Có gì đó không ổn, hãy thử lại sau!");
+      if (res) {
+        toast.success("Lưu truyện thành công");
+        follow.setReaded(manga.slug);
+      } else toast.error("Có gì đó không ổn, hãy thử lại sau!");
     }
     setIsFollowed(!isFollowed);
   };
@@ -112,6 +113,7 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
           setIsSubscribed(true);
         }
       })();
+      follow.setReaded(manga.slug);
     }
     // @ts-ignore
     if (manga?.slug && session?.user?.id) {
@@ -131,7 +133,7 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
       toast.error("Đăng nhập để bật thông báo");
       return;
     }
-    isSubscribed ? handleTurnOffNotification : handleTurnOnNotification;
+    isSubscribed ? handleTurnOffNotification() : handleTurnOnNotification();
   };
   return (
     <>

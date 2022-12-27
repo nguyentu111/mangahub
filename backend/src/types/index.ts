@@ -44,6 +44,7 @@ export interface ComicCard {
   hot?: string;
   link?: string;
   slug?: string;
+  newChapSlug?: string;
 }
 export interface Filter {
   sort?: "az" | "za" | "update" | "new" | "like";
@@ -84,7 +85,8 @@ export interface Comic {
   chapters: { title: string; link: string; time: string; slug: string }[];
 }
 export interface extendedComic extends Comic {
-  readed?: string;
+  readed?: string[];
+  lastTimeReaded?: number;
 }
 export interface Page_Image {
   id: string;

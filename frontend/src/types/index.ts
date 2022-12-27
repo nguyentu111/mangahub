@@ -42,6 +42,7 @@ export interface ComicCard {
   hot?: string;
   link?: string;
   slug?: string;
+  newChapSlug?: string;
 }
 export interface HotComic {
   data: ComicCard[] | [];
@@ -131,8 +132,13 @@ export interface Page extends Page_Image {
 // }
 export interface Chapter {
   pages: { id: number; src: string }[];
-  comicSlug: string;
+  slug: string; //comic slug
   chapter: string;
+  image: string;
+  name: string;
+  allChapters: Comic["chapters"];
+  summary: string;
+  genres: Comic["genres"];
 }
 export interface ChapterDetails {
   _id: string;
@@ -149,6 +155,14 @@ export interface PageInfo {
   comicSlug: string;
   pages: Page[];
   source: string;
+}
+export interface VistedComic {
+  slug: string;
+  chapterSlug: string[];
+  name: string;
+  image: string;
+  genres: Comic["genres"];
+  summary: string;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////  //////////////////////////////////
 // export interface Owner {

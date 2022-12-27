@@ -9,7 +9,7 @@ export default function UserController() {
       let { userId, page } = req.query;
       if (!page || isNaN(+page)) page = "1";
 
-      const limit = 10;
+      const limit = 20;
       if (!userId)
         return res
           .status(400)
@@ -24,7 +24,7 @@ export default function UserController() {
           .json({ success: false, message: "ko tim thay du lieu" });
       const resp = {
         userId,
-        comics: [] as Comic[],
+        comics: [] as extendedComic[],
       };
       data.comics = data.comics.slice(+page * limit - limit, +page * limit);
       await Promise.all(
@@ -40,9 +40,16 @@ export default function UserController() {
             comicDetails.readed = userWatchlist.comics.find(
               (_comic) => !!_comic.readed && _comic.slug === comic.slug
             )?.readed;
+            comicDetails.lastTimeReaded = userWatchlist.comics.find(
+              (_comic) => !!_comic.readed && _comic.slug === comic.slug
+            )?.lastTimeReaded;
+            console.log(comicDetails);
           }
           resp.comics.push(comicDetails as extendedComic);
         })
+      );
+      resp.comics.sort(
+        (a, b) => (b?.lastTimeReaded as number) - (a?.lastTimeReaded as number)
       );
       const meta = {
         totalPages: Math.ceil(data.comics.length / limit),

@@ -21,8 +21,11 @@ export default function lhModel() {
         .find(".thumb-wrapper > a")
         .attr("href")
         ?.split("truyen-tranh/")[1];
+      const newChapSlug = $(this)
+        .find(".chapter-title > a")
+        .attr("href")
+        ?.split((slug as string) + "/")[1];
       const link = baseUrl + "/lhmanga/comic/" + slug;
-
       comics.push({
         name,
         newChap,
@@ -30,6 +33,7 @@ export default function lhModel() {
         hot,
         link,
         slug,
+        newChapSlug,
       });
     });
     return comics;
@@ -225,10 +229,10 @@ export default function lhModel() {
       return null;
     }
   };
-  const getChapter = async (name: string, chapter: string) => {
+  const getChapter = async (slug: string, chapter: string) => {
     try {
       const { data } = await axios.get(
-        lhUrl + "/truyen-tranh/" + name + "/" + chapter
+        lhUrl + "/truyen-tranh/" + slug + "/" + chapter
       );
       const $ = cherrio.load(data);
       const pages: IPages = [];
@@ -238,7 +242,24 @@ export default function lhModel() {
           src: $(this).attr("src") || ($(this).attr("data-src") as string),
         });
       });
-      return { pages, comicSlug: name, chapter };
+      const comic = await getComic(slug);
+      console.log({
+        // pages,
+        slug,
+        chapter,
+        image: comic?.image,
+        name: comic?.name,
+        // allChapters: comic?.chapters,
+      });
+      return {
+        pages,
+        slug,
+        chapter,
+        image: comic?.image,
+        name: comic?.name,
+        genres: comic?.genres,
+        summary: comic?.summary,
+      };
     } catch (err) {
       console.log(err);
       return null;
