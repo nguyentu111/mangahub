@@ -23,6 +23,20 @@ export const PRIVATE_PATH = "follows";
 
 export const WEBSITE_URL = "http://locallhost:3000";
 
+export const sort_options = [
+  { label: "A-Z", value: "az" },
+  { label: "Z-A", value: "za" },
+  { label: "Mới cập nhật", value: "update" },
+  { label: "Truyện mới", value: "new" },
+  { label: "Xem nhiều", value: "top" },
+  { label: "Được thích nhiều", value: "like" },
+];
+
+export const status_options = [
+  { label: "Đang tiến hành", value: "dangtienhanh" },
+  { label: "Tạm ngưng", value: "tamngung" },
+  { label: "Đã hoàn thành", value: "hoanthanh" },
+];
 // export const SOURCE_COLLECTIONS: { [key: string]: string } = {
 //     NTC: 'http://www.nettruyenme.com',
 //     LHM: 'https://truyentranhlh.net',

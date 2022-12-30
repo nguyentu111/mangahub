@@ -1,3 +1,4 @@
+import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { Inter } from "@next/font/google";
 import axios from "axios";
 import { GetStaticProps } from "next";
@@ -17,35 +18,29 @@ interface Props {
 }
 export default function Home({ hotComics, newComics }: Props) {
   return (
-    <div className="dark:bg-[url('/static/media/landing_page_bg.png')] bg-cover pt-20">
-      <div className="mx-auto w-[90%] max-w-[1300px]">
-        <Head />
-        <Section
-          title="Truyện nổi bật"
-          link={`/${MANGA_PATH_NAME}/${MANGA_BROWSE_PAGE}?sort=top`}
+    <>
+      <Head />
+      <Section title="Truyện nổi bật" link={`/${MANGA_BROWSE_PAGE}?sort=top`}>
+        <SectionSwiper mangaList={hotComics.data} />
+      </Section>
+      <Section
+        title="Truyện mới cập nhật"
+        link={`/${MANGA_BROWSE_PAGE}?sort=update`}
+      >
+        <NewComics comics={newComics} />
+        <Link
+          href="/browse?sort=update"
+          className=" ml-auto mt-10 mr-10 p-3 rounded-md dark:text-white flex items-center gap-4 hover:bg-accent"
         >
-          <SectionSwiper mangaList={hotComics.data} />
-        </Section>
-        <Section
-          title="Truyện mới cập nhật"
-          link={`/${MANGA_PATH_NAME}/${MANGA_BROWSE_PAGE}?sort=update`}
-        >
-          <NewComics comics={newComics} />
-          <Link
-            href="/browser?genre=top"
-            className="block ml-auto mr-10 p-4 dark:text-white"
-          >
-            Xem thêm
-          </Link>
-        </Section>
-      </div>
-    </div>
+          Xem thêm
+          <ArrowRightIcon className="w-5 h-5" />
+        </Link>
+      </Section>
+    </>
   );
 }
 export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
-    // const { data: hotComics } = await axiosClient.get("/lhmanga/hot-comic");
-    // const { data: newComics } = await axiosClient.get("/lhmanga");
     const [{ data: hotComics }, { data: newComics }] = await Promise.all([
       axiosClient.get("/lhmanga/hot-comic"),
       axiosClient.get("/lhmanga"),

@@ -88,7 +88,6 @@ const ComicFollowed: NextPage = () => {
         toast.success("Bỏ theo dõi thành công", { duration: 1000 });
         const newFollowed = { ...(followingComics as ComicFollowed) };
         newFollowed.data.comics[index].unfollowed = true;
-        console.log(newFollowed?.data.comics);
 
         setFollowingComics(newFollowed);
       } else if (!res)
@@ -118,25 +117,13 @@ const ComicFollowed: NextPage = () => {
     }
   };
   return (
-    <div className="pt-20 dark:bg-[url('/static/media/landing_page_bg.png')] bg-no-repeat  bg-cover pb-[40px]  transition duration-300 min-h-screen">
+    <>
       {session?.user?.name && (
         <Head title={`Theo dõi - ${session?.user?.name} | Manga hub`} />
       )}
       <Toaster position="bottom-center" reverseOrder={false} />
-      <div className="flex flex-col w-[90%] max-w-[1300px] mx-auto">
+      <div className="flex flex-col">
         <Section title="Truyện đã lưu" style="mx-auto" />
-        {/* <div className="ml-auto">
-          <TabSelect selections={tabIcons} selectActions={handleSelectValue} />
-        </div>
-        <Section>
-          {followingComics?.data.comics && (
-            <ListView
-              isLoading={!!followingComics}
-              comics={followingComics?.data.comics}
-              viewType={viewType}
-            />
-          )}
-        </Section> */}
         <div className="overflow-x-auto">
           <table className="w-full min-w-[500px]">
             <thead>
@@ -199,7 +186,7 @@ const ComicFollowed: NextPage = () => {
                           className="flex items-center text-red-500 cursor-pointer w-fit text-sm"
                           onClick={() => handleUnfollow(comic.slug, index)}
                         >
-                          <XMarkIcon className="w-4 h-4 font-bold mr-3" />
+                          <XMarkIcon className="w-4 h-4 mr-3" />
                           Bỏ theo dõi
                         </span>
                       ) : (
@@ -207,7 +194,7 @@ const ComicFollowed: NextPage = () => {
                           className="flex items-center text-red-500 cursor-pointer w-fit text-sm"
                           onClick={() => handleFollow(comic.slug, index)}
                         >
-                          <HeartIcon className="w-5 h-5" />
+                          <HeartIcon className="w-5 h-5  mr-3" />
                           Theo dõi
                         </span>
                       )}
@@ -237,7 +224,7 @@ const ComicFollowed: NextPage = () => {
           </table>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 export default ComicFollowed;

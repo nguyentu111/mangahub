@@ -10,14 +10,14 @@
 @layer base {
 }
 @layer utilities {
-  .smooth-effect {
-    @apply transition-all duration-300;
-  }
-  .absolute-center {
-    @apply flex items-center justify-center;
-  }
   .full-size {
     @apply h-full w-full;
+  }
+  .trans-300 {
+    @apply transition-all duration-300;
+  }
+  .bg-accent {
+    background-color: #2c2c2c;
   }
 }
 @layer components {
@@ -25,6 +25,12 @@
     @apply p-2 cursor-pointer text-white bg-slate-400 rounded-md dark:bg-slate-500;
   }
 }
+
+:root {
+  --reading-sidebar-width: 312px;
+  --header-height: 64px;
+}
+
 /* Chrome, Edge, and Safari */
 // *::-webkit-scrollbar {
 //   /* position: absolute; */

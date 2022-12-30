@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    // unoptimized: true,
+    unoptimized: true,
     domains: [
       "www.truyentranhlh.net",
       "3.bp.blogspot.com",
@@ -10,6 +10,8 @@ const nextConfig = {
       "1.bp.blogspot.com",
       "cdn1.lhmanga.com",
       "metac.nxtv.jp",
+      "lh3.googleusercontent.com",
+      "st.truyenchon.com",
     ],
   },
 };

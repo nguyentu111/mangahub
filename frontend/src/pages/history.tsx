@@ -14,25 +14,10 @@ import TabSelect from "~/components/shared/TabSelect";
 import useFollow from "~/hooks/useFollow";
 import { Comic, VistedComic } from "~/types";
 
-interface ExtendedComic extends Comic {
-  unfollowed: boolean;
-  readed: string[];
-  lastTimeReaded: number;
-}
-interface ComicFollowed {
-  data: {
-    comics: ExtendedComic[];
-    userId: string;
-  };
-  meta: {
-    totalPages: string;
-    curentPage: string;
-  };
-}
 const tabIcons: ReactNode[] = [
   <ListIcon style="w-5 h-5" key={1} />,
-  <LListIcon style="w-5 h-5" key={1} />,
-  <SListIcon style="w-5 h-5" key={1} />,
+  <LListIcon style="w-5 h-5" key={2} />,
+  <SListIcon style="w-5 h-5" key={3} />,
 ];
 const HistoryPage: NextPage = () => {
   const { data: session, status } = useSession();
@@ -47,24 +32,22 @@ const HistoryPage: NextPage = () => {
   }, []);
   return (
     <ClientOnly>
-      <div className="pt-20 dark:bg-[url('/static/media/landing_page_bg.png')] bg-no-repeat  bg-cover pb-[40px]  transition duration-300 min-h-screen">
-        {session?.user?.name && (
-          <Head title={`Lịch sử - ${session?.user?.name} | Manga hub`} />
-        )}
-        <Toaster position="bottom-center" reverseOrder={false} />
-        <div className="flex flex-col w-[90%] max-w-[1300px] mx-auto">
-          <Section title="Lịch sử đọc" style="mx-auto" />
-          <div className="ml-auto">
-            <TabSelect selections={tabIcons} selectActions={setViewType} />
-          </div>
-          <Section>
-            <ListView
-              isLoading={comics.length === 0}
-              comics={comics}
-              viewType={viewType}
-            />
-          </Section>
+      {session?.user?.name && (
+        <Head title={`Lịch sử - ${session?.user?.name} | Manga hub`} />
+      )}
+      <Toaster position="bottom-center" reverseOrder={false} />
+      <div className="flex flex-col w-[90%] max-w-[1300px] mx-auto">
+        <Section title="Lịch sử đọc" style="mx-auto" />
+        <div className="ml-auto">
+          <TabSelect selections={tabIcons} selectActions={setViewType} />
         </div>
+        <Section>
+          <ListView
+            isLoading={comics.length === 0}
+            comics={comics}
+            viewType={viewType}
+          />
+        </Section>
       </div>
     </ClientOnly>
   );

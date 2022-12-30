@@ -11,20 +11,27 @@ const follow = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case "POST":
       try {
-        await db.collection("watchlists").updateOne(
-          {
-            userId: body.userId,
-            // "manga.slug": (body.manga as Comic).slug,
-          },
-          {
-            $addToSet: {
-              // userId:
-              comics: { slug: mangaSlug },
-              // createdAt: new Date(Date.now()),
+        const existingFollow = await db.collection("watchlists").findOne({
+          userId: body.userId,
+          "comics.slug": mangaSlug,
+          // "manga.slug": (body.manga as Comic).slug,
+        });
+        if (!existingFollow)
+          await db.collection("watchlists").updateOne(
+            {
+              userId: body.userId,
+              // "manga.slug": (body.manga as Comic).slug,
             },
-          },
-          { upsert: true }
-        );
+            {
+              $addToSet: {
+                comics: {
+                  slug: mangaSlug,
+                  lastTimeReaded: new Date().getTime(),
+                },
+              },
+            },
+            { upsert: true }
+          );
 
         res.status(201).json({
           success: true,

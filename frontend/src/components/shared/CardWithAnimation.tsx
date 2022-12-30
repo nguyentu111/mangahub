@@ -64,7 +64,7 @@ const Card = ({ comic, viewType, isLoading }: Props) => {
           )}
         >
           <Link
-            href={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}}`}
+            href={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
             className={classNames(
               " text-sm md:text-lg line-clamp-2",
               viewType !== 2 && "dark:text-white font-bold",

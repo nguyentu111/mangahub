@@ -51,7 +51,7 @@ export interface Filter {
   dangtienhanh?: string;
   tamngung?: string;
   hoanthanh?: string;
-  genres?: string;
+  genre?: string;
   page?: string;
 }
 export interface Comic {
@@ -97,23 +97,35 @@ export interface Page_Image {
 export interface Page extends Page_Image {
   _id: string;
 }
+// export interface Chapter {
+//   chapterId: string;
+//   chapterNumber: string;
+//   chapterTitle: string;
+//   chapterSlug?: string;
+//   updatedAt: string;
+//   view: string;
+//   _id?: string;
+// }
 export interface Chapter {
-  chapterId: string;
-  chapterNumber: string;
-  chapterTitle: string;
-  chapterSlug?: string;
-  updatedAt: string;
-  view: string;
-  _id?: string;
+  pages: { id: number; src: string }[];
+  comicSlug: string; //comic slug
+  currentChapter: {
+    slug: string;
+    title: string;
+  };
+  image: string;
+  name: string;
+  allChapters: Comic["chapters"];
+  summary: string;
+  genres: Comic["genres"];
 }
-
-export interface ChapterDetails {
-  _id: string;
-  comicName: string;
-  comicSlug: string;
-  source: string;
-  chapters_list: { _id: string; sourceName: string; chapters: Chapter[] }[];
-}
+// export interface ChapterDetails {
+//   _id: string;
+//   comicName: string;
+//   comicSlug: string;
+//   source: string;
+//   chapters_list: { _id: string; sourceName: string; chapters: Chapter[] }[];
+// }
 
 export type IPages = {
   id: number;

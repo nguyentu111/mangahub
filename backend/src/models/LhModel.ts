@@ -2,7 +2,7 @@ import axios from "axios";
 import * as cherrio from "cheerio";
 import { getImageUrl } from "../utils";
 import { config } from "dotenv";
-import { Comic, ComicCard, Filter, IPages } from "../types";
+import { Chapter, Comic, ComicCard, Filter, IPages } from "../types";
 import { URL } from "url";
 config();
 export default function lhModel() {
@@ -48,15 +48,15 @@ export default function lhModel() {
     }
   };
   const filterComic = async ({
-    genres,
     dangtienhanh,
     hoanthanh,
     sort = "update",
     tamngung,
     page,
+    genre,
   }: Filter) => {
     try {
-      let link = genres ? "/the-loai/" + genres : "/danh-sach";
+      let link = genre ? "/the-loai/" + genre : "/danh-sach";
       const { data } = await axios.get(lhUrl + link, {
         params: {
           dangtienhanh,
@@ -116,9 +116,15 @@ export default function lhModel() {
     try {
       const { data } = await axios.get(lhUrl);
       const $ = cherrio.load(data);
-      const genres: string[] = [];
+      let genres: {
+        value: string;
+        label: string;
+      }[] = [];
       $(".dropdown-item.genres-item").each(function () {
-        genres.push($(this).text());
+        genres.push({
+          label: $(this).text(),
+          value: $(this).attr("href")?.split("the-loai/")[1] as string,
+        });
       });
       return genres;
     } catch (e) {
@@ -243,22 +249,36 @@ export default function lhModel() {
         });
       });
       const comic = await getComic(slug);
-      console.log({
-        // pages,
-        slug,
-        chapter,
-        image: comic?.image,
-        name: comic?.name,
-        // allChapters: comic?.chapters,
-      });
       return {
-        pages,
-        slug,
-        chapter,
+        allChapters: comic?.chapters,
+        comicSlug: comic?.slug,
+        currentChapter: {
+          slug: chapter,
+          title: comic?.chapters.find((chap) => chap.slug === chapter)?.title,
+        },
+        genres: comic?.genres,
         image: comic?.image,
         name: comic?.name,
-        genres: comic?.genres,
+        pages,
         summary: comic?.summary,
+      } as Chapter;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  };
+  const search = async (q: string) => {
+    try {
+      const { data } = await axios.get(lhUrl + "/tim-kiem?q=" + q);
+      const $ = cherrio.load(data);
+
+      const comics = parseComic(".thumb-item-flow", data);
+      const lastPageLink = $(".pagination_wrap > a").last().attr("href");
+      let url: URL | null = null;
+      if (lastPageLink) url = new URL(lastPageLink);
+      return {
+        comics,
+        meta: { totalPage: url ? Number(url.searchParams.get("page")) : null },
       };
     } catch (err) {
       console.log(err);
@@ -272,5 +292,6 @@ export default function lhModel() {
     getComic,
     getChapter,
     advancedFilterComic,
+    search,
   };
 }

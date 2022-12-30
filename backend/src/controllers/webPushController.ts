@@ -8,8 +8,7 @@ import { isEmptyObject } from "../utils";
 config();
 const lh = lhModel();
 const FE_URL = process.env.FE_URL as string;
-if (FE_URL) console.log(`Pussing for url: ${FE_URL}`);
-else console.log("missing FE_URL");
+if (!FE_URL) console.log("missing FE_URL");
 export default function webPushController() {
   return {
     info: async (req: Request, res: Response, next: NextFunction) => {
@@ -163,131 +162,6 @@ export default function webPushController() {
     },
 
     update: async (req: Request, res: Response, next: NextFunction) => {
-      //   const subscribers = await Subscriber.find(
-      //     {},
-      //     { __v: 0, createdAt: 0, updatedAt: 0 }
-      //   ).populate("subComics");
-
-      //   const grouped = subscribers.reduce(
-      //     (acc, current) => {
-      //       current.subComics.forEach((item) => {
-      //         if (
-      //           //@ts-ignore
-      //           !acc.find((i) => i?.comicId === String(item?._id))
-      //         ) {
-      //           acc.push({
-      //             //@ts-ignore
-      //             comicId: String(item?._id),
-      //             latestChapterTitle:
-      //               //@ts-ignore
-      //               item?.latestChapter?.chapterTitle,
-      //             subscriptions: [],
-      //           });
-      //         }
-      //       });
-
-      //       current.subComics.forEach((item) => {
-      //         const res = acc.find(
-      //           //@ts-ignore
-      //           (i) => i?.comicId === String(item?._id)
-      //         );
-      //         //@ts-ignore
-      //         res?.subscriptions.push(...current.identifications);
-      //       });
-
-      //       return acc;
-      //     },
-      //     [] as {
-      //       comicId: string;
-      //       latestChapterTitle: string;
-      //       subscriptions: Subscription[];
-      //     }[]
-      //   );
-
-      //   await Promise.allSettled(
-      //     grouped.map(async (item) => {
-      //       try {
-      //         const existingComic = await Nt.getLatestChapter(item.comicId);
-
-      //         if (
-      //           !isEmptyObject(existingComic) &&
-      //           existingComic.latestChapter?.chapterTitle !==
-      //             item.latestChapterTitle
-      //         ) {
-      //           await Comic.updateOne(
-      //             {
-      //               _id: item.comicId,
-      //             },
-      //             {
-      //               latestChapter: existingComic.latestChapter,
-      //             }
-      //           );
-
-      //           await Promise.allSettled(
-      //             item.subscriptions.map(async (sub) => {
-      //               try {
-      //                 await webPush.sendNotification(
-      //                   {
-      //                     endpoint: sub.endpoint,
-      //                     keys: {
-      //                       auth: sub.auth,
-      //                       p256dh: sub.p256dh,
-      //                     },
-      //                   },
-      //                   JSON.stringify({
-      //                     title: `${existingComic?.title} đã có chap mới`,
-      //                     body: existingComic.latestChapter?.chapterTitle,
-      //                     badge:
-      //                       "https://res.cloudinary.com/lee1002/image/upload/v1658088029/personal/xykwxyxuhnmpg3nxgvrv.png",
-      //                     icon: "https://res.cloudinary.com/lee1002/image/upload/v1658088029/personal/xykwxyxuhnmpg3nxgvrv.png",
-      //                     image: existingComic.cover,
-      //                     data: {
-      //                       url: `${FE_URL}/comic/details/${item.comicId}`,
-      //                     },
-      //                   })
-      //                 );
-      //               } catch (error: any) {
-      //                 if (
-      //                   error?.body?.includes("expire") ||
-      //                   error?.body?.includes("unsubscribe")
-      //                 ) {
-      //                   console.log(":: ", error);
-
-      //                   await Subscriber.deleteOne({
-      //                     identifications: {
-      //                       $elemMatch: {
-      //                         endpoint: sub?.endpoint,
-      //                         p256dh: sub?.p256dh,
-      //                         auth: sub?.auth,
-      //                       },
-      //                     },
-      //                   });
-      //                 }
-      //               }
-      //             })
-      //           );
-      //         }
-      //       } catch (err) {
-      //         console.log(":: ", err);
-      //         next();
-      //       }
-      //     })
-      //   );
-
-      //   return res.status(200).json({
-      //     message: "Ok",
-      //   });
-      //////////////////////////////////////////////////////////////////////////////////////////
-      // const subscribers = await Subscriber.find(
-      //   {}
-      //   // { __v: 0, createdAt: 0, updatedAt: 0 }
-      // ).lean();
-      // subscribers.forEach((subscriber: ISubscriber) => {
-      //   subscriber.subComics.forEach(({ comicSlug, lastestChap }) =>
-      //     notifyNewChapToUser({ subscriber, comicSlug, lastestChap })
-      //   );
-      // });
-      //////////////////////////////////////////////////////////////////////////////////////////
       const subscribers = await Subscriber.find({}).lean();
       const grouped = subscribers.reduce(
         (acc, subscriber) => {
@@ -333,24 +207,8 @@ export default function webPushController() {
               await Promise.allSettled(
                 item.subscriptions.map(async (sub) => {
                   try {
-                    // update subscribers -> subcomic -> latestchap
-                    // const res = await Subscriber.findOne({
-                    //   // "subComics.comicSlug": item.lastestChap,
-                    //   subComics: {
-                    //     $elemMatch: {
-                    //       comicSlug: item.comicSlug,
-                    //     },
-                    //   },
-                    //   identifications: {
-                    //     $elemMatch: {
-                    //       endpoint: sub?.endpoint,
-                    //       p256dh: sub?.p256dh,
-                    //       auth: sub?.auth,
-                    //     },
-                    //   },
-                    // }).lean();
-                    // console.log({ res });
-                    Subscriber.updateOne(
+                    await Subscriber.updateOne(
+                      //idk why it have to await here to work
                       {
                         subComics: {
                           $elemMatch: {
@@ -427,7 +285,7 @@ export default function webPushController() {
               );
             }
           } catch (err) {
-            console.log(":: ", err);
+            // console.log(":: ", err);
             next();
           }
         })

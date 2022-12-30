@@ -12,8 +12,7 @@ interface HeadProps {
 export default function Head({
   title = "Manga hub",
   description = "Website đọc truyện tranh miễn phí!",
-}: // image = 'https://i.ibb.co/vBCzhGX/kyt-manga.png',
-HeadProps) {
+}: HeadProps) {
   const { asPath } = useRouter();
 
   return (
@@ -38,8 +37,8 @@ HeadProps) {
 
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="application-name" content="Kyoto Manga" />
-      <meta name="apple-mobile-web-app-title" content="Kyoto Manga" />
+      <meta name="application-name" content="Manga hub" />
+      <meta name="apple-mobile-web-app-title" content="Manga hub" />
       <meta name="theme-color" content="#f43f5e" />
       <meta name="msapplication-navbutton-color" content="#f43f5e" />
       <meta

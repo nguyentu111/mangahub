@@ -1,10 +1,18 @@
 import axios from "axios";
+import { AnimatePresence } from "framer-motion";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
+import Reader from "~/components/features/Reader";
+import VerticalPanel from "~/components/features/VerticalPanel";
+import ReadingLayout from "~/components/layout/ReadingLayout";
 import Head from "~/components/shared/Head";
+import ReadHeader from "~/components/shared/ReadHeader";
+import Section from "~/components/shared/Section";
+import Teleport from "~/components/shared/Teleport";
+import ReadingContextProvider from "~/context/ReadingContext";
 import useFollow from "~/hooks/useFollow";
 import { axiosClient } from "~/services/axiosClient";
 import { Chapter, ChapterDetails, PageInfo, VistedComic } from "~/types";
@@ -28,60 +36,54 @@ const ReadPage = ({ data }: Props) => {
     "visited-comics",
     [] as VistedComic[]
   );
+  const handleCloseSideSettings = () => {};
   useEffect(() => {
     if (!isFallback) {
       (async () => {
         try {
-          await follow.setReaded(data?.slug, data?.chapter);
+          await follow.setReaded(data?.comicSlug, data?.currentChapter.slug);
         } catch (err) {
           console.log(err);
         }
       })();
       setReadingHistory((prev) => {
-        if (!prev.find((comic) => comic.slug === data.slug)) {
+        if (!prev.find((comic) => comic.slug === data.comicSlug)) {
           prev.push({
             chapterSlug: [],
             name: data.name,
             image: data.image,
             // @ts-ignore
-            slug: data.slug,
+            slug: data.comicSlug,
             genres: data.genres,
             summary: data.summary,
           });
         }
-        if (
-          !prev
-            .find((comic) => comic.slug === data.slug)
-            ?.chapterSlug.find((chap) => chap === data.chapter)
-        ) {
-          prev
-            .find((comic) => comic.slug === data.slug)
-            ?.chapterSlug.push(data.chapter);
+        //add new chapter slug to history
+        const chapter = prev.find(
+          (comic) => comic.slug === data.comicSlug
+        )?.chapterSlug;
+        if (!chapter?.find((chap) => chap === data.currentChapter.slug)) {
+          chapter?.push(data.currentChapter.slug);
         }
         return prev;
       });
     }
   }, [isFallback, data]);
   return (
-    <div className="dark:bg-[url('/static/media/landing_page_bg.png')] bg-cover  pt-20 min-h-screen">
-      <div className="w-[90%] max-w-[1300px] mx-auto ">
-        {!isFallback && <Head title={data?.chapter + " | Manga hub"} />}
-        <div className="mt-24 dark:text-white">
-          {isFallback
-            ? "loading ..."
-            : data?.pages?.map((image) => (
-                <div key={image.id} className="mx-auto ">
-                  {/*  eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={image.src}
-                    alt="image"
-                    className="mx-auto max-w-[100%]"
-                  />
-                </div>
-              ))}
-        </div>
-      </div>
-    </div>
+    <>
+      {!isFallback && (
+        <>
+          <Head title={data?.currentChapter.slug + " | " + data.name} />
+          <ReadHeader chapter={data} />
+          <div className="dark:text-white">
+            <Teleport selector="body">
+              <VerticalPanel chapter={data} />
+            </Teleport>
+            <Reader loading={isFallback} chapter={data} />
+          </div>
+        </>
+      )}
+    </>
   );
 };
 
@@ -113,3 +115,4 @@ export const getStaticProps: GetStaticProps = async (context) => {
     return { notFound: true };
   }
 };
+ReadPage.getLayout = (page: ReactNode) => <ReadingLayout>{page}</ReadingLayout>;

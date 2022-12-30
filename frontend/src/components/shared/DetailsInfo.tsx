@@ -94,16 +94,17 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
     }
     if (isFollowed) {
       const res = await follow._delete(manga?.slug);
-      if (res) toast.success("Bỏ lưu thành công");
-      else toast.error("Có gì đó không ổn, hãy thử lại sau!");
+      if (res) {
+        toast.success("Bỏ lưu thành công");
+        setIsFollowed(!isFollowed);
+      } else toast.error("Có gì đó không ổn, hãy thử lại sau!");
     } else {
       const res = await follow.add(manga?.slug);
       if (res) {
         toast.success("Lưu truyện thành công");
-        follow.setReaded(manga.slug);
+        setIsFollowed(!isFollowed);
       } else toast.error("Có gì đó không ổn, hãy thử lại sau!");
     }
-    setIsFollowed(!isFollowed);
   };
   useEffect(() => {
     if (manga?.slug) {

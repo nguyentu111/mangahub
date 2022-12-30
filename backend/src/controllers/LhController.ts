@@ -57,3 +57,14 @@ export const getChapter = async (
     return res.status(404).json({ message: "chapter not found" });
   return res.status(200).json(data);
 };
+export const search = async (
+  req: Request<{ name: string | undefined; chapter: string | undefined }>,
+  res: Response
+) => {
+  const { q } = req.query;
+  if (!q) return res.status(400).json({ message: "missing query" });
+  const data = await lh.search(q as string);
+  if (data?.comics.length === 0)
+    return res.status(404).json({ message: "not found any comic" });
+  return res.status(200).json(data);
+};

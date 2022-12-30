@@ -30,4 +30,7 @@ export default NextAuth({
     },
   },
   adapter: MongoDBAdapter(clientPromise),
+  pages: {
+    signIn: "/login",
+  },
 });

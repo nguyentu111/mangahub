@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Comic } from "~/types";
-import Card from "./Card";
+import CardWithAnimation from "~/components/shared/CardWithAnimation";
 import { VistedComic } from "~/types";
 import { AnimatePresence, motion } from "framer-motion";
 import classNames from "classnames";
@@ -25,7 +25,7 @@ const ListView = ({ comics, viewType, isLoading }: Props) => {
         )}
       >
         {comics.map((comic) => (
-          <Card
+          <CardWithAnimation
             comic={comic}
             key={comic.slug}
             viewType={viewType}

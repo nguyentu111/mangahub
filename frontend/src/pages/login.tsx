@@ -1,21 +1,23 @@
 import React, { ReactNode } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
+import MainLayout from "~/components/layout/MainLayout";
 
 type Props = {};
 
 const LoginPage = (props: Props) => {
   return (
-    <div className="h-screen bg-gray-500 flex items-center">
+    <div className="h-screen flex items-center">
       <div
-        className="w-full h-[600px] py-20 px-3 m-auto sm:w-[400px] border-2 text-center flex flex-col justify-center gap-[60px]
+        className="w-full h-[600px] py-20 px-3 m-auto sm:w-[400px] border-2 text-center
+         flex flex-col justify-center gap-[60px]
       "
       >
-        <span className="text-4xl text-white font-primary uppercase tracking-[5px]">
+        <span className="text-4xl text-black dark:text-white font-primary uppercase tracking-[5px]">
           MANGA HUB
         </span>
         <div
-          className="bg-white rounded-lg p-2 flex items-center justify-evenly cursor-pointer
+          className="bg-gray-400 dark:bg-white rounded-lg p-2 flex items-center justify-evenly cursor-pointer
          max-w-[400px] space-x-5 mx-auto transition duration-200 hover:scale-110"
           onClick={() => signIn("google", { callbackUrl: "/" })}
         >
@@ -28,4 +30,4 @@ const LoginPage = (props: Props) => {
 };
 
 export default LoginPage;
-LoginPage.getLayout = (page: ReactNode) => page;
+LoginPage.getLayout = (page: ReactNode) => <MainLayout>{page}</MainLayout>;
