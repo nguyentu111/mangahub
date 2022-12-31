@@ -43,11 +43,16 @@ export interface HotComic {
   data: ComicCard[] | [];
 }
 export interface Filter {
-  sort?: "az" | "za" | "update" | "new" | "like";
   dangtienhanh?: string;
   tamngung?: string;
   hoanthanh?: string;
   genres?: string;
+  q?: string;
+  artist?: string;
+  status?: string;
+  sort?: string;
+  accept_genres?: string;
+  reject_genres?: string;
   page?: string;
 }
 export interface Comic {

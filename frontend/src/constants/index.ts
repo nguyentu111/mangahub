@@ -33,9 +33,9 @@ export const sort_options = [
 ];
 
 export const status_options = [
-  { label: "Đang tiến hành", value: "dangtienhanh" },
-  { label: "Tạm ngưng", value: "tamngung" },
-  { label: "Đã hoàn thành", value: "hoanthanh" },
+  { label: "Đang tiến hành", value: "dangtienhanh", replaceVal: "1" },
+  { label: "Tạm ngưng", value: "tamngung", replaceVal: "2" },
+  { label: "Đã hoàn thành", value: "hoanthanh", replaceVal: "3" },
 ];
 // export const SOURCE_COLLECTIONS: { [key: string]: string } = {
 //     NTC: 'http://www.nettruyenme.com',

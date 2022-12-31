@@ -132,7 +132,13 @@ const HeaderSearch = (props: Props) => {
             </div>
           ))}
         {searchQuery && !loading && showResult && searchResult != null ? (
-          <button className="text-center h-10 cursor-pointer w-full hover:text-blue-500 border-t-[1px]">
+          <button
+            className="text-center h-10 cursor-pointer w-full hover:text-blue-500 border-t-[1px]"
+            onClick={(e) => {
+              // e.stopPropagation();
+              router.push(`/search?q=${searchQuery}`);
+            }}
+          >
             Xem tất cả
           </button>
         ) : (

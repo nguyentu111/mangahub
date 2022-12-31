@@ -1,4 +1,4 @@
-import cors, { CorsOptions } from "cors";
+import cors from "cors";
 import express from "express";
 import connect from "./config/db";
 import routes from "./routes";
@@ -15,7 +15,7 @@ webpush.setVapidDetails(
   publicVapidKey,
   privateVapidKey
 );
-app.use(express.urlencoded({ extended: true })); // nhận dữ liệu từ form
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 routes(app);

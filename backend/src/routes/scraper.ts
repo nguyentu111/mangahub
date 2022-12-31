@@ -2,18 +2,12 @@ const puppeteer = require("puppeteer-extra");
 const { executablePath } = require("puppeteer");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(StealthPlugin());
-
-////////////////////////////////////////////////////////////////
+// const Koa = require("koa");
+// const bodyParser = require("koa-bodyparser");
+// const app = new Koa();
+// app.use(bodyParser());
+// const jsesc = require("jsesc");
 import { Express } from "express";
-import lhmangaRouter from "./lhmanga";
-import notifyRouter from "./notify";
-import userRouter from "./user";
-// import scraper from "./scraper";
-let options = {
-  headless: true,
-  args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  executablePath: executablePath(),
-};
 const headersToRemove = [
   "host",
   "user-agent",
@@ -33,14 +27,25 @@ const responseHeadersToRemove = [
   "content-encoding",
   "set-cookie",
 ];
-function routes(app: Express) {
-  // app.use("/manga", comicRouter);
-  app.use("/lhmanga", lhmangaRouter);
-  app.use("/notify", notifyRouter);
-  app.use("/user", userRouter);
-  app.use("/scraper", async (req, res) => {
+let appCache: Express;
+const scraper = async (app: Express) => {
+  let options = {
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    executablePath: executablePath(),
+  };
+  if (!appCache?.use) appCache = app;
+  // if (process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD)
+  //   options.executablePath = "/usr/bin/chromium-browser";
+  // if (process.env.PUPPETEER_HEADFUL) options.headless = false;
+  // if (process.env.PUPPETEER_USERDATADIR)
+  //   options.userDataDir = process.env.PUPPETEER_USERDATADIR;
+  // if (process.env.PUPPETEER_PROXY)
+  //   options.args.push(`--proxy-server=${process.env.PUPPETEER_PROXY}`);
+  console.log(app.use);
+  const browser = await puppeteer.launch(options);
+  appCache.use("scraper", async (req, res) => {
     console.log("scrapping ...");
-    const browser = await puppeteer.launch(options);
     if (req.query.url) {
       const url: string = (req.query.url as string).replace("/?url=", "");
       let responseBody;
@@ -116,36 +121,34 @@ function routes(app: Express) {
           waitUntil: "domcontentloaded",
         });
         responseBody = await response.text();
-        // console.log(responseBody);
-        // responseData = await response.buffer();
-        return res.send(responseBody);
-        // while (responseBody.includes("challenge-running") && tryCount <= 10) {
-        //   const newResponse = await page.waitForNavigation({
-        //     timeout: 30000,
-        //     waitUntil: "domcontentloaded",
-        //   });
-        //   if (newResponse) response = newResponse;
-        //   responseBody = await response.text();
-        //   responseData = await response.buffer();
-        //   tryCount++;
-        // }
-        // responseHeaders = await response.headers();
-        // const cookies = await page.cookies();
-        // if (cookies)
-        //   cookies.forEach(
-        //     (cookie: {
-        //       [x: string]: any;
-        //       name: any;
-        //       value: any;
-        //       secure?: any;
-        //       expires?: any;
-        //       domain?: any;
-        //     }) => {
-        //       const { name, value, secure, expires, domain, ...options } =
-        //         cookie;
-        //       req.cookies.set(cookie.name, cookie.value, options);
-        //     }
-        //   );
+        responseData = await response.buffer();
+        while (responseBody.includes("challenge-running") && tryCount <= 10) {
+          const newResponse = await page.waitForNavigation({
+            timeout: 30000,
+            waitUntil: "domcontentloaded",
+          });
+          if (newResponse) response = newResponse;
+          responseBody = await response.text();
+          responseData = await response.buffer();
+          tryCount++;
+        }
+        responseHeaders = await response.headers();
+        const cookies = await page.cookies();
+        if (cookies)
+          cookies.forEach(
+            (cookie: {
+              [x: string]: any;
+              name: any;
+              value: any;
+              secure?: any;
+              expires?: any;
+              domain?: any;
+            }) => {
+              const { name, value, secure, expires, domain, ...options } =
+                cookie;
+              req.cookies.set(cookie.name, cookie.value, options);
+            }
+          );
       } catch (error) {
         //@ts-ignore
         if (!error.toString().includes("ERR_BLOCKED_BY_CLIENT")) {
@@ -163,7 +166,7 @@ function routes(app: Express) {
         // ctx.set(header, jsesc(responseHeaders[header]))
       });
       // ctx.body = responseData;
-      // return res.send(responseBody);
+      return res.json({ data: responseData });
     } else {
       return res.json({
         error: "Please specify the URL in the 'url' query string.",
@@ -171,7 +174,6 @@ function routes(app: Express) {
       // ctx.body = "Please specify the URL in the 'url' query string.";
     }
   });
-  app.use("/", (req, res) => res.json({ success: true }));
-}
-
-export default routes;
+  // app.listen(process.env.PORT || 3000);
+};
+export default scraper;

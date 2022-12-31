@@ -18,6 +18,9 @@
     "mongoose": "^6.8.0",
     "node-cron": "^3.0.2",
     "nodemon": "^2.0.20",
+    "puppeteer": "^19.4.1",
+    "puppeteer-extra": "^3.3.4",
+    "puppeteer-extra-plugin-stealth": "^2.11.1",
     "web-push": "^3.5.0"
   },
   "devDependencies": {

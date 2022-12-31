@@ -53,33 +53,6 @@ export default function webPushController() {
         userId,
         identifications: { $elemMatch: { endpoint, p256dh, auth } },
       });
-      //check exist comic in db:
-      // const existingComic = await Comic.findById(comicId);
-
-      //missing comic -> get comic -> insert
-      // if (!existingComic) {
-      //   const comic = await Nt.getLatestChapter(comicId);
-
-      //   //check comic data get successful
-      //   if (
-      //     comic &&
-      //     Object.keys(comic).length === 0 &&
-      //     Object.getPrototypeOf(comic) === Object.prototype
-      //   ) {
-      //     console.error("missing comic");
-      //     return res.status(404).json({
-      //       success: false,
-      //       message: "can not found comic",
-      //     });
-      //   }
-
-      //   await Comic.create({
-      //     _id: comicId,
-      //     title: comic.title,
-      //     latestChapter: comic.latestChapter,
-      //     cover: comic.cover,
-      //   });
-      // }
       if (!existingIdentifications) {
         //update user to subscribers
         await Subscriber.updateOne(

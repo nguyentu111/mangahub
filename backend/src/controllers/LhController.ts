@@ -26,7 +26,7 @@ export const advancedFilterComic = async (
   const data = await lh.advancedFilterComic(req.query);
   if (!data?.comics)
     return res.status(500).json({ message: "Error load comic" });
-  return res.status(200).json({ data: data.comics, meta: data.meta });
+  return res.status(200).json(data);
 };
 export const getAllGenres = async (req: Request, res: Response) => {
   const genres = await lh.allGenres();
