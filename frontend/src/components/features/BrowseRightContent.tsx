@@ -24,7 +24,7 @@ const BrowseRightContent = (props: Props) => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4 col-span-4 text-white">
+    <div className="flex flex-col gap-4 md:col-span-4 text-white">
       <div className="flex flex-col bg-accent  select-none">
         <h3 className="whitespace-nowrap p-3 text-xl">Tình trạng</h3>
         <div className="p-4 flex flex-col gap-2">

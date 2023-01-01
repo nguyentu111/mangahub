@@ -28,8 +28,8 @@ const BrowseLeftContent = ({ data }: Props) => {
   const router = useRouter();
   const { sort } = router.query;
   return (
-    <div className="bg-accent text-white col-span-8">
-      <div className="flex justify-between">
+    <div className="bg-accent text-white md:col-span-8">
+      <div className="flex flex-col sm:flex-row justify-between">
         <h3 className="whitespace-nowrap p-3 text-xl">Danh sách truyện</h3>
         <Combobox
           onChange={(e) => query.push({ sort: e.target.value }, true)}
@@ -37,7 +37,7 @@ const BrowseLeftContent = ({ data }: Props) => {
           options={sort_options}
         />
       </div>
-      <div className="grid grid-cols-4 gap-4 p-8">
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-4 p-8">
         {data.data.map((comic, key) => (
           <Card key={key} comic={comic} />
         ))}

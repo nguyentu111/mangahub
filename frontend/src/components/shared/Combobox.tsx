@@ -11,7 +11,7 @@ type Props = {
 const Combobox = ({ defaultValue, onChange, options }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="relative">
+    <div className="relative w-fit">
       <select
         className="bg-accent outline-none border-[1px] border-white p-2 pr-12 rounded m-2 appearance-none"
         onChange={onChange}

@@ -12,7 +12,7 @@ type Props = {
 const BrowsePage = ({ data }: Props) => {
   console.log({ data });
   return (
-    <div className="grid grid-cols-12 gap-4 dark:text-white w-full">
+    <div className="flex flex-col md:grid md:grid-cols-12 gap-4 dark:text-white w-full">
       <BrowseLeftContent data={data} />
       <BrowseRightContent />
     </div>

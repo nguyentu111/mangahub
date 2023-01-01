@@ -6,8 +6,10 @@ import { Chapter, Comic, ComicCard, Filter, IPages } from "../types";
 import { URL } from "url";
 config();
 export default function lhModel() {
-  const lhUrl = "https://www.truyentranhlh.net";
+  const lhUrl = process.env.LH_URL as string;
   const baseUrl = process.env.BASE_URL;
+  if (!lhUrl) console.log("Please add lhUrl to .env file");
+  if (!baseUrl) console.log("Please Add baseUrl to .env file");
   const parseComic = (selector: string, data: any) => {
     const $ = cherrio.load(data);
     const comics: ComicCard[] = [];
