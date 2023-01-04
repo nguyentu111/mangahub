@@ -38,7 +38,7 @@ export async function connectToDatabase() {
   const db = await client.db(dbName);
 
   cachedClient = client;
-  // cachedDb = db;
+  cachedDb = db;
 
   return { db };
 }

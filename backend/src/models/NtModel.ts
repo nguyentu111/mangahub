@@ -5,10 +5,11 @@ import { config } from "dotenv";
 import { Chapter, Comic, ComicCard, Filter, IPages } from "../types";
 import { URL } from "url";
 import scraper from "../services/scraper";
+import { BASE_URL, NT_URL } from "../config";
 config();
 export default function ntModel() {
-  const NtUrl = process.env.NT_URL as string;
-  const baseUrl = process.env.BASE_URL as string;
+  const NtUrl = NT_URL as string;
+  const baseUrl = BASE_URL as string;
   if (!NtUrl) console.log("Please add NtUrl to .env file");
   if (!baseUrl) console.log("Please Add baseUrl to .env file");
   const parseComic = (selector: string, data: any) => {

@@ -1,6 +1,6 @@
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { Inter } from "@next/font/google";
-import axios from "axios";
+import { FiFilter } from "react-icons/fi";
 import { GetStaticProps } from "next";
 import Link from "next/link";
 import NewComics from "~/components/features/NewComics";
@@ -26,11 +26,16 @@ export default function Home({ hotComics, newComics }: Props) {
       <Section
         title="Truyện mới cập nhật"
         link={`/${MANGA_BROWSE_PAGE}?sort=update`}
+        rightContent={
+          <Link href={"/browse"}>
+            <FiFilter className="w-8 h-8 text-red" />
+          </Link>
+        }
       >
         <NewComics comics={newComics} />
         <Link
           href="/browse?sort=update"
-          className=" ml-auto mt-10 mr-10 p-3 rounded-md dark:text-white flex items-center gap-4 hover:bg-accent"
+          className=" ml-auto mt-10 mr-10 p-3 rounded-md hover:text-white flex items-center gap-4 hover:bg-accent dark:text-white "
         >
           Xem thêm
           <ArrowRightIcon className="w-5 h-5" />

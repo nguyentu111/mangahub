@@ -1,25 +1,3 @@
-export interface IComic {
-  status: string;
-  author: string;
-  genres: Genre[];
-  otherName: string;
-  review: string;
-  newChapter: string;
-  thumbnail: string;
-  name: string;
-  slug: string;
-  sourcesAvailable: [
-    {
-      sourceName: string;
-      sourceSlug: string;
-      _id: string;
-    }
-  ];
-  __v: number;
-  chapters: string;
-  votes?: string[];
-}
-
 // export interface Genres {
 //   id: string;
 //   value: string;
@@ -149,11 +127,11 @@ export interface VistedComic {
   summary: string;
 }
 
-export type NavigateDirection = "next" | "prev";
-export type Readmode = "ver" | "hor" | "webtoon";
-export interface ReadModeSettings {
-  readMode: Readmode;
-}
+// export type NavigateDirection = "next" | "prev";
+// export type Readmode = "ver" | "hor" | "webtoon";
+// export interface ReadModeSettings {
+//   readMode: Readmode;
+// }
 
 export interface Subscription {
   endpoint: string;

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useReadLocalStorage } from "usehooks-ts";
 import useSubscription from "~/context/SubscriptionContext";
 import { axiosClient } from "~/services/axiosClient";
+import { register } from "~/services/registerServiceWorkers";
 
 export default function useNotification() {
   const router = useRouter();
@@ -40,7 +41,28 @@ export default function useNotification() {
         const result = await Notification.requestPermission();
         if (result !== "granted") return "permission_denied";
         else {
-          //add identification to db here
+          const subscription = await register();
+          if (!subscription) return "error";
+
+          const parsed = JSON.parse(JSON.stringify(subscription));
+          const { expirationTime, ...rest } = parsed;
+
+          sub?.setSubscription(rest);
+          try {
+            await axiosClient.post("/notify/subscribe", {
+              //@ts-ignore
+              userId: session?.user?.id as string,
+              endpoint: rest?.subscription?.endpoint,
+              p256dh: rest?.subscription?.keys.p256dh,
+              auth: rest?.subscription?.keys.auth,
+              comicSlug,
+            });
+
+            return "success";
+          } catch (err) {
+            console.error("error subscribe:: ", err);
+            return "error";
+          }
         }
       }
 
@@ -48,9 +70,9 @@ export default function useNotification() {
         await axiosClient.post("/notify/subscribe", {
           //@ts-ignore
           userId: session?.user?.id as string,
-          endpoint: sub?.endpoint,
-          p256dh: sub?.keys.p256dh,
-          auth: sub?.keys.auth,
+          endpoint: sub?.subscription?.endpoint,
+          p256dh: sub?.subscription?.keys.p256dh,
+          auth: sub?.subscription?.keys.auth,
           comicSlug,
         });
 

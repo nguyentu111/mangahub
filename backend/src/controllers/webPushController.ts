@@ -1,14 +1,13 @@
-// @ts-nocheck
 import { NextFunction, Request, Response } from "express";
 import webPush from "web-push";
 import { config } from "dotenv";
 import Subscriber from "../models/Subscriber.model";
 import lhModel from "../models/LhModel";
 import { isEmptyObject } from "../utils";
+import { FE_URL } from "../config";
+import { Subscription } from "../types";
 config();
 const lh = lhModel();
-const FE_URL = process.env.FE_URL as string;
-if (!FE_URL) console.log("missing FE_URL");
 export default function webPushController() {
   return {
     info: async (req: Request, res: Response, next: NextFunction) => {
@@ -161,10 +160,10 @@ export default function webPushController() {
           comicSlug: string;
           lastestChap: string;
           subscriptions: {
-            userId;
-            endpoint;
-            p256dh;
-            auth;
+            userId: string;
+            endpoint: Subscription["endpoint"];
+            p256dh: Subscription["keys"]["p256dh"];
+            auth: Subscription["keys"]["auth"];
           }[];
         }[]
       );

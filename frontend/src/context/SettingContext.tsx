@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from "react";
-import { Chapter, NavigateDirection, Page } from "~/types";
+import { createContext, useContext, ReactNode } from "react";
+import { Chapter } from "~/types";
 interface ReadingContextType {
   currentChapter?: Chapter;
 }

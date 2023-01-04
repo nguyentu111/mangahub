@@ -1,13 +1,11 @@
 import cron, { ScheduledTask } from "node-cron";
-// import NtModel from '../models/Nt.model';
-// const baseUrl = process.env.NT_SOURCE_URL as string;
-// const Nt = NtModel.Instance(baseUrl);
 import { config } from "dotenv";
 
 import axios from "axios";
+import { BASE_URL } from "../config";
 const tasks: ScheduledTask[] = [];
 config();
-const baseUrl = process.env.BASE_URL as string;
+const baseUrl = BASE_URL as string;
 async function notifyNewManga() {
   try {
     await axios.get(baseUrl + "/notify/update");

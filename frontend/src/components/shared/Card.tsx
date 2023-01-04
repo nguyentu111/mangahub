@@ -1,3 +1,4 @@
+import Tippy from "@tippyjs/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -39,7 +40,10 @@ const Card = ({ comic }: { comic: ComicCard }) => {
       <Link
         href={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
       >
-        <h1 className="text-sm line-clamp-3 hover:text-red-500 sm:text-md md:text-lg">
+        <h1
+          className="text-sm line-clamp-3 hover:text-red-500 sm:text-md md:text-lg"
+          title={comic.name}
+        >
           {comic.name}
         </h1>
       </Link>

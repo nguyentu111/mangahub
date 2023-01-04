@@ -59,7 +59,7 @@ export default function App({
   return (
     <SessionProvider session={session} refetchInterval={5 * 60}>
       <JotaiProvider>
-        <SubscriptionContextProvider value={subscription}>
+        <SubscriptionContextProvider value={{ subscription, setSubscription }}>
           <ThemeProvider>
             {getLayout(<Component {...pageProps} />)}
           </ThemeProvider>

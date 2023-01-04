@@ -1,24 +1,35 @@
-import { createContext, ReactNode, useContext } from 'react';
-import { Subscription } from '~/types';
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useContext,
+} from "react";
+import { Subscription } from "~/types";
+
+type ContextValue = {
+  subscription: Subscription | null;
+  setSubscription: Dispatch<SetStateAction<Subscription | null>>;
+} | null;
 
 interface SubscriptionContextProps {
-    children: ReactNode;
-    value: Subscription | null;
+  children: ReactNode;
+  value: ContextValue;
 }
 
-const SubscriptionContext = createContext<Subscription | null>(null);
+const SubscriptionContext = createContext<ContextValue>(null);
 
 export const SubscriptionContextProvider = ({
-    children,
-    value,
+  children,
+  value,
 }: SubscriptionContextProps) => {
-    return (
-        <SubscriptionContext.Provider value={value}>
-            {children}
-        </SubscriptionContext.Provider>
-    );
+  return (
+    <SubscriptionContext.Provider value={value}>
+      {children}
+    </SubscriptionContext.Provider>
+  );
 };
 
 export default function useSubscription() {
-    return useContext(SubscriptionContext);
+  return useContext(SubscriptionContext);
 }

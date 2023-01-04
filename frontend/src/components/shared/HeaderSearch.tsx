@@ -14,6 +14,7 @@ import Tippy from "@tippyjs/react";
 import Link from "next/link";
 import { MANGA_PATH_DETAILS_NAME, MANGA_PATH_NAME } from "~/constants";
 import { useRouter } from "next/router";
+import Head from "./Head";
 type Props = {};
 interface SearchResult {
   comics: ComicCard[];
@@ -21,27 +22,52 @@ interface SearchResult {
     totalPage: number;
   };
 }
+const spring = {
+  type: "spring",
+  stiffness: 700,
+  damping: 30,
+};
 const HeaderSearch = (props: Props) => {
   const [isOpen, setOpen] = useHeaderSearchStatus();
-  const spring = {
-    type: "spring",
-    stiffness: 700,
-    damping: 30,
-  };
   const matchMobile = useMediaQuery("(max-width: 768px)");
-  const ref = useRef(null);
   const router = useRouter();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showResult, setShowResult] = useState(false);
-  let queryDebounced = useDebounce(searchQuery, 700);
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
   const [loading, setLoading] = useState(false);
-  useOnClickOutside(ref, () => {
-    if (!matchMobile) {
-      setOpen(false);
-    }
-  });
+  useDebounce(
+    () => {
+      if (!searchQuery.trim()) {
+        return;
+      }
+      setLoading(true);
+      (async () => {
+        try {
+          let { data }: { data: SearchResult } = await axiosClient.get(
+            "/lhmanga/search",
+            {
+              params: {
+                q: searchQuery,
+              },
+            }
+          );
+
+          if (data) {
+            data.comics = data.comics.splice(0, 5);
+            setSearchResult(data);
+            setShowResult(true);
+          }
+          setLoading(false);
+        } catch (e) {
+          setLoading(false);
+          setSearchResult(null);
+        }
+      })();
+    },
+    [searchQuery],
+    500
+  );
   useEffect(() => {
     //prevent scrolling when modal is opened on mobile
     if (matchMobile) {
@@ -51,58 +77,31 @@ const HeaderSearch = (props: Props) => {
     }
   }, [isOpen]);
   useEffect(() => {
-    if (!queryDebounced.trim()) {
-      return;
-    }
-    setLoading(true);
-    (async () => {
-      try {
-        let { data }: { data: SearchResult } = await axiosClient.get(
-          "/lhmanga/search",
-          {
-            params: {
-              q: queryDebounced,
-            },
-          }
-        );
-
-        if (data) {
-          data.comics = data.comics.splice(0, 5);
-          setSearchResult(data);
-          setShowResult(true);
-        }
-        setLoading(false);
-      } catch (e) {
-        setLoading(false);
-        setSearchResult(null);
-      }
-    })();
-  }, [queryDebounced]);
-  useEffect(() => {
     if (!searchQuery.trim()) {
-      // setSearchResult(null);
       setShowResult(false);
       setLoading(false);
       return;
     } else {
       setShowResult(true);
-      // setLoading(true);
+      setLoading(true);
     }
   }, [searchQuery]);
   const renderTippy = () =>
     isOpen && (
       <div
+        // ref={refTippy}
         className={classNames(
-          "bg-gray-400 text-black dark:bg-slate-900/75overflow-y-auto dark:text-white z-[9999]",
+          "bg-gray-400 text-black dark:bg-slate-900/75overflow-y-auto dark:text-white z-[9999] rounded-md",
           matchMobile ? " max-h-screen w-screen " : "w-[400px] max-h-[450px]"
         )}
       >
-        {loading && <div className="text-center ">Đợi tí ...</div>}
+        {loading && <div className="text-center py-2">Đợi tí ...</div>}
         {showResult &&
           !loading &&
           searchResult?.comics.map((comic, index) => (
             <div
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 router.push(
                   `/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`
                 );
@@ -136,7 +135,9 @@ const HeaderSearch = (props: Props) => {
             className="text-center h-10 cursor-pointer w-full hover:text-blue-500 border-t-[1px]"
             onClick={(e) => {
               // e.stopPropagation();
+              e.preventDefault();
               router.push(`/search?q=${searchQuery}`);
+              setOpen(false);
             }}
           >
             Xem tất cả
@@ -144,7 +145,19 @@ const HeaderSearch = (props: Props) => {
         ) : (
           searchQuery &&
           !loading && (
-            <div className="w-full p-2 text-center">Không tìm thấy</div>
+            <div className="w-full p-2 text-center">
+              Không tìm thấy.
+              {"  "}
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  router.push("/search?sort=new");
+                }}
+                className="text-blue-800 underline"
+              >
+                Tìm nâng cao
+              </button>
+            </div>
           )
         )}
       </div>
@@ -157,6 +170,7 @@ const HeaderSearch = (props: Props) => {
           isOpen && "fixed top-0 left-0 w-screen h-screen bg-gray-700/80 z-50"
         )}
       >
+        <Head title="Manga hub" />
         <Tippy
           visible={isOpen}
           interactive={true}
@@ -164,7 +178,7 @@ const HeaderSearch = (props: Props) => {
           placement={"bottom"}
         >
           <motion.div
-            ref={ref}
+            // ref={ref}
             layout
             transition={spring}
             className={classNames(
@@ -205,48 +219,57 @@ const HeaderSearch = (props: Props) => {
       </div>
     );
   return (
-    <Tippy
-      ref={ref}
-      visible={isOpen}
-      interactive={true}
-      render={renderTippy}
-      placement={"bottom-end"}
-    >
-      <motion.div
-        ref={ref}
-        layout
-        transition={spring}
-        initial={{ width: 0 }}
-        animate={{ width: "100%" }}
-        className={classNames(
-          "text-black dark:text-white m-auto flex items-center gap-2  rounded-full",
-          isOpen && "px-2 bg-gray-500/50"
-        )}
+    <>
+      <Head title="Manga hub" />
+      <Tippy
+        onClickOutside={() => setOpen(false)}
+        // ref={ref}
+        visible={isOpen}
+        interactive={true}
+        render={renderTippy}
+        placement={"bottom-end"}
       >
-        {isOpen && (
-          <input
-            autoFocus
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search "
-            className={classNames(
-              "w-[200px] text-white  p-2 rounded-md bg-transparent",
-              isOpen && "!w-full"
-            )}
-          />
-        )}
-
-        <button
-          onClick={() => setOpen(!isOpen)}
+        <motion.div
+          // ref={ref}
+          layout
+          transition={spring}
+          initial={{ width: 0 }}
+          animate={{ width: "100%" }}
           className={classNames(
-            "hover:bg-gray-500/50 p-2 rounded-full ",
-            isOpen ? "text-white" : "text-black dark:text-white"
+            "text-black dark:text-white m-auto flex items-center gap-2  rounded-full",
+            isOpen && "px-2 bg-gray-500/50"
           )}
         >
-          <GoSearch className="w-5 h-5" />
-        </button>
-      </motion.div>
-    </Tippy>
+          {isOpen && (
+            <input
+              autoFocus
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+              }}
+              // onBlur={(e) => {
+              //   isOpen && setOpen(false);
+              // }}
+              placeholder="Search "
+              className={classNames(
+                "w-[200px] text-white  p-2 rounded-md bg-transparent",
+                isOpen && "!w-full"
+              )}
+            />
+          )}
+
+          <button
+            onClick={() => setOpen(!isOpen)}
+            className={classNames(
+              "hover:bg-gray-500/50 p-2 rounded-full ",
+              isOpen ? "text-white" : "text-black dark:text-white"
+            )}
+          >
+            <GoSearch className="w-5 h-5" />
+          </button>
+        </motion.div>
+      </Tippy>
+    </>
   );
 };
 

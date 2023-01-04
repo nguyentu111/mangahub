@@ -1,13 +1,10 @@
-import dotenv from "dotenv";
 import { Request, Response } from "express";
-import axios from "axios";
+import { BASE_URL } from "../config";
+import { comic_status } from "../constant";
 import Comic from "../models/ComicModel";
 import { IComicFilter, QuerryManga } from "../types";
 import { isNumber } from "../utils";
-import { comic_status } from "../constant";
-import * as cherrio from "cheerio";
-dotenv.config();
-const baseUrl = process.env.BASE_URL;
+
 // type Status = "Hoàn thành" | "Đang tiến hành";
 export const getNewComic = async (
   req: Request<{}, {}, {}, QuerryManga>,

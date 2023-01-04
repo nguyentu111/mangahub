@@ -10,7 +10,6 @@ type Props = {
 };
 
 const BrowsePage = ({ data }: Props) => {
-  console.log({ data });
   return (
     <div className="flex flex-col md:grid md:grid-cols-12 gap-4 dark:text-white w-full">
       <BrowseLeftContent data={data} />
@@ -31,7 +30,14 @@ export const getServerSideProps: GetServerSideProps = async ({
     }`
   );
   try {
-    const { dangtienhanh, hoanthanh, sort, tamngung, page, genre } = query;
+    const {
+      dangtienhanh,
+      hoanthanh,
+      sort = "az",
+      tamngung,
+      page,
+      genre,
+    } = query;
     const { data } = await axiosClient.get("/lhmanga", {
       params: {
         dangtienhanh,

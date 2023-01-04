@@ -7,18 +7,18 @@ type Props = {};
 
 const LoginPage = (props: Props) => {
   return (
-    <div className="h-screen flex items-center">
+    <div className="h-screen flex items-center bg-[url('/static/media/login-wallpaper.jpg')] bg-center">
       <div
-        className="w-full h-[600px] py-20 px-3 m-auto sm:w-[400px] border-2 text-center
-         flex flex-col justify-center gap-[60px]
+        className="w-[300px] bg-white py-6 p-3 m-auto sm:w-[400px] text-center
+         flex flex-col justify-center gap-10 rounded-lg
       "
       >
-        <span className="text-4xl text-black dark:text-white font-primary uppercase tracking-[5px]">
+        <span className="text-xl md:text-4xl text-black dark:text-white font-primary uppercase tracking-[5px]">
           MANGA HUB
         </span>
         <div
-          className="bg-gray-400 dark:bg-white rounded-lg p-2 flex items-center justify-evenly cursor-pointer
-         max-w-[400px] space-x-5 mx-auto transition duration-200 hover:scale-110"
+          className="bg-white rounded-lg p-2 flex items-center justify-evenly cursor-pointer
+         max-w-[400px] space-x-5 mx-auto transition duration-200 hover:scale-110 border-2"
           onClick={() => signIn("google", { callbackUrl: "/" })}
         >
           <FcGoogle className="w-6 h-6 " />
@@ -30,4 +30,4 @@ const LoginPage = (props: Props) => {
 };
 
 export default LoginPage;
-LoginPage.getLayout = (page: ReactNode) => <MainLayout>{page}</MainLayout>;
+LoginPage.getLayout = (page: ReactNode) => <>{page}</>;

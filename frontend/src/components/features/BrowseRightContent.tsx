@@ -3,18 +3,29 @@ import { ChangeEvent, useState, useEffect, memo } from "react";
 import usePushQuery from "~/hooks/usePushQuery";
 import { Genre } from "~/types";
 import { axiosClient } from "~/services/axiosClient";
+import { useRouter } from "next/router";
 type Props = {};
 
 const BrowseRightContent = (props: Props) => {
+  const router = useRouter();
+  const {
+    dangtienhanh = "0",
+    tamngung = "0",
+    hoanthanh = "0",
+  } = router.query as {
+    dangtienhanh: string;
+    tamngung: string;
+    hoanthanh: string;
+  };
   const [status, setStatus] = useState({
-    dangtienhanh: 0,
-    tamngung: 0,
-    hoanthanh: 0,
+    dangtienhanh,
+    tamngung,
+    hoanthanh,
   });
   const [genres, setGenres] = useState<Genre[]>([]);
   const query = usePushQuery();
   const handleChangeStatus = (e: ChangeEvent<HTMLInputElement>) => {
-    setStatus({ ...status, [e.target.value]: e.target.checked ? 1 : 0 });
+    setStatus({ ...status, [e.target.value]: e.target.checked ? "1" : "0" });
   };
   useEffect(() => {
     (async () => {
@@ -38,7 +49,9 @@ const BrowseRightContent = (props: Props) => {
                 type={"checkbox"}
                 name="status"
                 value={opt.value}
-                className="w-4 h-4 accent-green-500 caret-green-300"
+                //@ts-ignore
+                checked={status[opt.value] === "1"}
+                className="w-4 h-4 accent-green-500 caret-green-300 marker:text-blue-600 "
                 onChange={handleChangeStatus}
               />
               <label htmlFor={opt.value}>{opt.label}</label>

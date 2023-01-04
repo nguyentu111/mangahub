@@ -1,26 +1,26 @@
 import { BlobOptions } from "buffer";
 
-export interface IComic {
-  status: string;
-  author: string;
-  genres: Genres[];
-  otherName: string;
-  review: string;
-  newChapter: string;
-  thumbnail: string;
-  name: string;
-  slug: string;
-  sourcesAvailable: [
-    {
-      sourceName: string;
-      sourceSlug: string;
-      _id: string;
-    }
-  ];
-  __v: number;
-  chapters: string;
-  votes?: string[];
-}
+// export interface IComic {
+//   status: string;
+//   author: string;
+//   genres: Genres[];
+//   otherName: string;
+//   review: string;
+//   newChapter: string;
+//   thumbnail: string;
+//   name: string;
+//   slug: string;
+//   sourcesAvailable: [
+//     {
+//       sourceName: string;
+//       sourceSlug: string;
+//       _id: string;
+//     }
+//   ];
+//   __v: number;
+//   chapters: string;
+//   votes?: string[];
+// }
 export interface QuerryManga {
   page?: string;
   limit?: string;

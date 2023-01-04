@@ -62,7 +62,7 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
         setIsSubscribed(true);
         break;
       default:
-        toast.error("Có gì đó sai sai! Hãy thử lại sau :<", {
+        toast.error("Có gì đó sai sai! Thử lại sau nhé :<", {
           duration: 2000,
           style: { zIndex: 899 },
         });
@@ -192,7 +192,7 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
                     <span className="font-bold mr-2">Tác giả: </span>
                     {manga.author.map((v, idx) => (
                       <Fragment key={idx}>
-                        <Link href={v.link as string}>
+                        <Link href={`/search?artist=${v.slug}`}>
                           <span className="cursor-pointer hover:text-red-500">
                             {v.label}
                           </span>
@@ -212,7 +212,7 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
                     {manga.genres.map((v, idx) => (
                       <Link
                         key={idx}
-                        href={v.link as string}
+                        href={`/browse?genre=${v.slug}` as string}
                         className="  w-fit h-fit text-center flex justify-start mb-2"
                       >
                         <span
@@ -230,7 +230,7 @@ function DetailsInfo({ manga, isLoading }: DetailsInfoProps) {
                     <span className="font-bold">Trạng thái: </span>
                     {manga.status.map((v, idx) => (
                       <>
-                        <Link href={v.link as string} className="">
+                        <Link href={`/browse?${v.slug}`} className="">
                           <span className="cursor-pointer hover:text-red-500">
                             {v.label}
                           </span>

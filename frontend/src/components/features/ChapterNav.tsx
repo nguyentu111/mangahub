@@ -50,9 +50,9 @@ const ChapterNav = ({ chapter }: Props) => {
       >
         {chapter.allChapters.map((chap) => (
           <option key={chap.slug} value={chap.slug}>
-            <Link href={"/"} className="p-3 block">
-              {chap.title}
-            </Link>
+            {/* <Link href={"/"} className="p-3 block"> */}
+            {chap.title}
+            {/* </Link> */}
           </option>
         ))}
       </select>

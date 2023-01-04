@@ -39,7 +39,7 @@ export const getComic = async (
   res: Response
 ) => {
   const { name } = req.params;
-  const path = req.baseUrl + req.path;
+  // const path = req.baseUrl + req.path;
   if (!name) return res.status(500).json({ message: "no name found" });
   const comic = await lh.getComic(name);
   if (!comic) return res.status(404).json({ message: "comic not found" });

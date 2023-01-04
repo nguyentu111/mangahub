@@ -9,7 +9,7 @@ export default function UserController() {
       let { userId, page } = req.query;
       if (!page || isNaN(+page)) page = "1";
 
-      const limit = 20;
+      const limit = 10;
       if (!userId)
         return res
           .status(400)

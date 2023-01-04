@@ -11,3 +11,8 @@ dotenv.config();
 //web push config:
 export const publicVapidKey = process.env.PUBLIC_VAPID_KEY as string;
 export const privateVapidKey = process.env.PRIVATE_VAPID_KEY as string;
+export const BASE_URL = process.env.BASE_URL as string;
+export const FE_URL = process.env.FE_URL as string;
+export const NT_URL = process.env.NT_URL as string;
+export const LH_URL = process.env.LH_URL as string;
+export const MONGO_URL = process.env.MONGO_URL as string;

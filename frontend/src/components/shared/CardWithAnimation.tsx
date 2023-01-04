@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { memo } from "react";
+import { memo, MouseEvent, useState } from "react";
 import classNames from "classnames";
 import { MANGA_PATH_DETAILS_NAME, MANGA_PATH_NAME } from "~/constants";
 import { Comic, VistedComic } from "~/types";
 import { motion } from "framer-motion";
+import { useLocalStorage } from "usehooks-ts";
 type Props = {
   comic: Comic | VistedComic;
   viewType: number;
@@ -12,7 +13,21 @@ type Props = {
 };
 
 const Card = ({ comic, viewType, isLoading }: Props) => {
-  return (
+  const [deleted, setDeleted] = useState(false);
+
+  const [comics, setComics] = useLocalStorage<VistedComic[]>(
+    "visited-comics",
+    []
+  );
+  const handleDelete = (
+    e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setComics([...comics.filter((_comic) => _comic.slug !== comic.slug)]);
+    setDeleted(true);
+  };
+  return deleted ? null : (
     <motion.div
       layout
       className={classNames("relative inline-block p-2 dark:text-white")}
@@ -21,8 +36,8 @@ const Card = ({ comic, viewType, isLoading }: Props) => {
         layout
         className={classNames(
           " w-full h-full rounded-md",
-          viewType === 0 && " p-2 flex dark:bg-[#444444]",
-          viewType === 1 && " p-2 flex dark:bg-[#444444]"
+          viewType === 0 && " p-2 flex bg-gray-300 dark:bg-[#444444]",
+          viewType === 1 && " p-2 flex bg-gray-300 dark:bg-[#444444]"
         )}
       >
         <div
@@ -35,12 +50,7 @@ const Card = ({ comic, viewType, isLoading }: Props) => {
             " rounded-md overflow-hidden group select-none cover relative "
           )}
         >
-          <div
-          // className=""
-          // initial={{ width: 0 }}
-          // animate={{  }}
-          // className={classNames(viewType===2 && 'max-w-[100%]')}
-          >
+          <div>
             <Link
               href={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
             >
@@ -54,6 +64,12 @@ const Card = ({ comic, viewType, isLoading }: Props) => {
                   viewType === 2 && "group-hover:scale-105"
                 )}
               />
+              <button
+                className="w-full bg-gray-400/70 absolute bottom-0"
+                onClick={handleDelete}
+              >
+                Xóa
+              </button>
             </Link>
           </div>
         </div>
@@ -71,7 +87,7 @@ const Card = ({ comic, viewType, isLoading }: Props) => {
               viewType === 2 &&
                 "line-clamp-2 group-hover:bg-gradient-to-b from-transparent to-gray-800 "
             )}
-            style={{ textShadow: "0 0 4px #000" }}
+            // style={{ textShadow: "0 0 4px #000" }}
           >
             {comic.name}
           </Link>
@@ -83,9 +99,9 @@ const Card = ({ comic, viewType, isLoading }: Props) => {
           >
             {comic.genres?.map((genre, index) => (
               <Link
-                href={genre.slug}
+                href={`/browse?genre=${genre.slug}`}
                 key={index}
-                className="text-sm bg-[#4f4f4f] rounded-sm mx-1"
+                className="text-sm text-white bg-[#4f4f4f] rounded mx-1 px-1"
               >
                 {genre.label}
               </Link>

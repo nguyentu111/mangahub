@@ -4,10 +4,11 @@ import { getImageUrl } from "../utils";
 import { config } from "dotenv";
 import { Chapter, Comic, ComicCard, Filter, IPages } from "../types";
 import { URL } from "url";
+import { BASE_URL, LH_URL } from "../config";
 config();
 export default function lhModel() {
-  const lhUrl = process.env.LH_URL as string;
-  const baseUrl = process.env.BASE_URL;
+  const lhUrl = LH_URL as string;
+  const baseUrl = BASE_URL;
   if (!lhUrl) console.log("Please add lhUrl to .env file");
   if (!baseUrl) console.log("Please Add baseUrl to .env file");
   const parseComic = (selector: string, data: any) => {
@@ -89,15 +90,19 @@ export default function lhModel() {
     accept_genres,
     reject_genres,
     q,
+    page,
+    artist,
   }: any) => {
     try {
       const { data } = await axios.get(lhUrl + "/tim-kiem", {
         params: {
+          artist,
           status,
           sort,
           accept_genres,
           reject_genres,
           q,
+          page,
         },
       });
       const $ = cherrio.load(data);
@@ -156,6 +161,7 @@ export default function lhModel() {
               label: string;
               link: string;
               slug: string;
+              replaceVal?: string;
             }[] = [];
         if (name === "Thể loại:") {
           $(this)
@@ -175,6 +181,22 @@ export default function lhModel() {
               const slug = link?.split("tac-gia/")[1] as string;
               value.push({ link, label, slug });
             });
+        else if (name === "Tình trạng:")
+          $(this)
+            .find(".info-value")
+            .each(function () {
+              const label = $(this).text() as string;
+              const link = $(this).find("a").attr("href") as string;
+              let slug = link?.split(".net/")[1] as string;
+              // console.log({ slug });
+              slug =
+                slug === "tinh-trang-dang-tien-hanh"
+                  ? "dangtienhanh=1&tamngung=0&hoanthanh=0"
+                  : slug === "tinh-trang-da-hoan-thanh"
+                  ? "dangtienhanh=0&tamngung=0&hoanthanh=1"
+                  : "dangtienhanh=0&tamngung=1&hoanthanh=0";
+              value.push({ link, label, slug });
+            });
         else
           $(this)
             .find(".info-value")
@@ -184,7 +206,6 @@ export default function lhModel() {
               const slug = link?.split(".net/")[1] as string;
               value.push({ link, label, slug });
             });
-
         switch (name) {
           case "Tên khác:":
             otherName = value;

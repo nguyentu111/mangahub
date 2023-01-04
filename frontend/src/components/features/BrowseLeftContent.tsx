@@ -1,18 +1,9 @@
-import { ChevronDownIcon } from "@heroicons/react/24/solid";
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import {
-  MANGA_PATH_DETAILS_NAME,
-  MANGA_PATH_NAME,
-  MANGA_PATH_READ_NAME,
-  sort_options,
-} from "~/constants";
+import { sort_options } from "~/constants";
 import usePushQuery from "~/hooks/usePushQuery";
 import { ComicCard } from "~/types";
 import Card from "../shared/Card";
 import Combobox from "../shared/Combobox";
-import ImageWrapper from "../shared/ImageWrapper";
 import Pagination from "./Pagination";
 type Props = {
   data: {

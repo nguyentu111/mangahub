@@ -46,18 +46,12 @@ const ComicFollowed: NextPage = () => {
   const [followingComics, setFollowingComics] = useState<null | ComicFollowed>(
     null
   );
-  const [viewType, setViewType] = useState(1);
   const follow = useFollow();
-  const handleSelectValue = (type: number) => {
-    setViewType(type);
-  };
   useEffect(() => {
     (async () => {
       const follows = await follow.getAllFollows();
       if (follows?.data) {
         setFollowingComics(follows);
-        console.log(follows);
-        // setLoading(true);
       }
     })();
 
@@ -159,7 +153,7 @@ const ComicFollowed: NextPage = () => {
                   <td className="p-2 text-blue-500 font-bold align-top">
                     <Link
                       href={`${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
-                      className=" hover:text-purple-500 leading-4"
+                      className=" hover:text-purple-500 leading-4 line-clamp-4 leading-5"
                     >
                       {comic.name}
                     </Link>
