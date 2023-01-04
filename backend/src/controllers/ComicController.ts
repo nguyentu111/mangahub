@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { BASE_URL } from "../config";
 import { comic_status } from "../constant";
 import Comic from "../models/ComicModel";
 import { IComicFilter, QuerryManga } from "../types";

@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "manga project with express and mongodb",
   "main": "src/index.ts",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "start": "nodemon src/index.ts",
     "build": "tsc --project ."
