@@ -23,3 +23,4 @@ app.listen(4000, () => {
   console.log("The application is listening on port 4000!");
 });
 tasks.forEach((task) => task.start());
+module.exports = app;
