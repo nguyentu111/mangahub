@@ -7,7 +7,7 @@
     "node": "14.x"
   },
   "scripts": {
-    "start": "nodemon src/index.ts",
+    "start": "nodemon dist/index.ts",
     "build": "tsc --project ."
   },
   "author": "tu nguyen",
