@@ -54,7 +54,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       props: { hotComics, newComics },
     };
   } catch (error) {
-    console.log({ error });
+    console.log({ loi: "loi load truyen ", error });
     return {
       notFound: true,
     };

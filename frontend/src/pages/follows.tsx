@@ -133,7 +133,7 @@ const ComicFollowed: NextPage = () => {
                 <tr key={comic.slug} className="border-b-[1px]">
                   <td className="p-2">
                     <Link
-                      href={`${MANGA_PATH_NAME}/${MANGA_PATH_READ_NAME}/${comic.slug}`}
+                      href={`${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
                       className={
                         "w-[50px] h-[50px] lg:w-[70px] lg:h-[70px] block"
                       }
@@ -153,7 +153,7 @@ const ComicFollowed: NextPage = () => {
                   <td className="p-2 text-blue-500 font-bold align-top">
                     <Link
                       href={`${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
-                      className=" hover:text-purple-500 leading-4 line-clamp-4 leading-5"
+                      className=" hover:text-purple-500 line-clamp-4 leading-5"
                     >
                       {comic.name}
                     </Link>

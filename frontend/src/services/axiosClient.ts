@@ -6,6 +6,7 @@ export const axiosClient = axios.create({
   headers: {
     "content-type": "application/json",
     "Access-Control-Allow-Origin": process.env.BASE_URL || "localhost:3000",
+    "Accept-Encoding": "gzip,deflate,compress", //https://github.com/axios/axios/issues/5346
   },
   // paramsSerializer: (params: any) => queryString.stringify(params),
 });
