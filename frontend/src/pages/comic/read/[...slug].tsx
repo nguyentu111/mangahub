@@ -36,7 +36,7 @@ const ReadPage = ({ data }: Props) => {
     "visited-comics",
     [] as VistedComic[]
   );
-  const handleCloseSideSettings = () => {};
+
   useEffect(() => {
     if (!isFallback) {
       (async () => {
@@ -46,34 +46,36 @@ const ReadPage = ({ data }: Props) => {
           console.log(err);
         }
       })();
-      setReadingHistory((prev) => {
-        if (!prev.find((comic) => comic.slug === data.comicSlug)) {
-          prev.push({
-            chapterSlug: [],
-            name: data.name,
-            image: data.image,
-            // @ts-ignore
-            slug: data.comicSlug,
-            genres: data.genres,
-            summary: data.summary,
-          });
-        }
-        //add new chapter slug to history
-        const chapter = prev.find(
-          (comic) => comic.slug === data.comicSlug
-        )?.chapterSlug;
-        if (!chapter?.find((chap) => chap === data.currentChapter.slug)) {
-          chapter?.push(data.currentChapter.slug);
-        }
-        return prev;
-      });
+      if (!isFallback) {
+        setReadingHistory((prev) => {
+          if (!prev.find((comic) => comic.slug === data?.comicSlug)) {
+            prev.push({
+              chapterSlug: [],
+              name: data?.name,
+              image: data?.image,
+              // @ts-ignore
+              slug: data?.comicSlug,
+              genres: data?.genres,
+              summary: data?.summary,
+            });
+          }
+          //add new chapter slug to history
+          const chapter = prev.find(
+            (comic) => comic.slug === data?.comicSlug
+          )?.chapterSlug;
+          if (!chapter?.find((chap) => chap === data?.currentChapter.slug)) {
+            chapter?.push(data?.currentChapter.slug);
+          }
+          return prev;
+        });
+      }
     }
   }, [isFallback, data]);
   return (
     <>
       {!isFallback && (
         <>
-          <Head title={data?.currentChapter.slug + " | " + data.name} />
+          <Head title={data?.currentChapter.slug + " | " + data?.name} />
           <ReadHeader chapter={data} />
           <div className="dark:text-white">
             <Teleport selector="body">

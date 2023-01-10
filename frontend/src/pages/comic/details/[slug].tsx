@@ -92,7 +92,7 @@ const Details: NextPage<Props> = ({ comic }) => {
                         //     ? manga.thumbnail
                         //     : `${PROXY_SERVER}/proxy?url=${url}&src=${manga.thumbnail}`
                         //   : torriGate
-                        comic.image
+                        comic?.image
                       }
                     />
                   </figure>
