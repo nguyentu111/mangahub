@@ -16,12 +16,13 @@ import useFollow from "~/hooks/useFollow";
 import { useReadLocalStorage } from "usehooks-ts";
 type Props = {
   comic: Comic;
+  slug: string;
 };
 interface Params extends ParsedUrlQuery {
   slug: string;
 }
 
-const Details: NextPage<Props> = ({ comic }) => {
+const Details: NextPage<Props> = ({ comic, slug }) => {
   const [hideSummary, setHideSummary] = useState(true);
   const router = useRouter();
   const [theme] = useTheme();
@@ -29,6 +30,7 @@ const Details: NextPage<Props> = ({ comic }) => {
     useReadLocalStorage("visited-comics") as VistedComic[]
   )?.find((_comic) => _comic?.slug === comic?.slug)?.chapterSlug;
   // @ts-ignore
+  console.log({ slug });
   return (
     <>
       <Head
@@ -188,6 +190,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
     return {
       props: {
         comic: data,
+        slug,
       },
       revalidate: 5 * 60 * 60,
     };
