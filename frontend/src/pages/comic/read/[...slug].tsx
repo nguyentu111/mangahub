@@ -73,7 +73,7 @@ const ReadPage = ({ data }: Props) => {
   }, [isFallback, data]);
   return (
     <>
-      {!isFallback && (
+      {!isFallback && data && (
         <>
           <Head title={data?.currentChapter?.slug + " | " + data?.name} />
           <ReadHeader chapter={data} />
