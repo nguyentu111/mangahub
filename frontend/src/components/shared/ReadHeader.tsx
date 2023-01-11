@@ -9,7 +9,7 @@ const ReadHeader = ({ chapter }: Props) => {
   return (
     <div className="py-8 text-center">
       <h2 className="text-xl font-bold dark:text-white">
-        {chapter.currentChapter.title}
+        {chapter?.currentChapter.title}
       </h2>
     </div>
   );
