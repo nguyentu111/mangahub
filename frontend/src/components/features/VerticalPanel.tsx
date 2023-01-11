@@ -34,7 +34,7 @@ const VerticalPanel = ({ chapter }: Props) => {
         <div className="flex gap-4 ">
           <BookOpenIcon className="w-6 h-6 flex-shrink-0" />
           <Link
-            href={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${chapter.comicSlug}`}
+            href={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${chapter?.comicSlug}`}
             className="text-red-500 font-bold font-primary text-lg truncate"
           >
             {chapter?.name}

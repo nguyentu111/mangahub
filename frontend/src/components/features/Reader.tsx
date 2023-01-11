@@ -18,7 +18,7 @@ const Reader = ({ loading, chapter }: Props) => {
     return () => {
       setOpenSideBar(false);
     };
-  }, [chapter.currentChapter.slug]);
+  }, [chapter?.currentChapter.slug]);
 
   return (
     <div>
@@ -30,8 +30,8 @@ const Reader = ({ loading, chapter }: Props) => {
           )}
         >
           <div className="max-w-full">
-            <span className="line-clamp-1">{chapter.name}</span>
-            <span>{chapter.currentChapter.title}</span>
+            <span className="line-clamp-1">{chapter?.name}</span>
+            <span>{chapter?.currentChapter?.title}</span>
           </div>
           <button
             onClick={() => setOpenSideBar(true)}

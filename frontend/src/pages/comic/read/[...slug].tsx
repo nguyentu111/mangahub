@@ -41,7 +41,7 @@ const ReadPage = ({ data }: Props) => {
     if (!isFallback) {
       (async () => {
         try {
-          await follow.setReaded(data?.comicSlug, data?.currentChapter.slug);
+          await follow.setReaded(data?.comicSlug, data?.currentChapter?.slug);
         } catch (err) {
           console.log(err);
         }
@@ -63,8 +63,8 @@ const ReadPage = ({ data }: Props) => {
           const chapter = prev.find(
             (comic) => comic.slug === data?.comicSlug
           )?.chapterSlug;
-          if (!chapter?.find((chap) => chap === data?.currentChapter.slug)) {
-            chapter?.push(data?.currentChapter.slug);
+          if (!chapter?.find((chap) => chap === data?.currentChapter?.slug)) {
+            chapter?.push(data?.currentChapter?.slug);
           }
           return prev;
         });
@@ -75,7 +75,7 @@ const ReadPage = ({ data }: Props) => {
     <>
       {!isFallback && (
         <>
-          <Head title={data?.currentChapter.slug + " | " + data?.name} />
+          <Head title={data?.currentChapter?.slug + " | " + data?.name} />
           <ReadHeader chapter={data} />
           <div className="dark:text-white">
             <Teleport selector="body">
