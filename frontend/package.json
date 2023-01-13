@@ -27,6 +27,7 @@
     "framer-motion": "^7.10.2",
     "heroicons": "^2.0.13",
     "jotai": "^1.11.2",
+    "mongodb": "^4.13.0",
     "next": "13.0.7",
     "next-auth": "^4.18.6",
     "nprogress": "^0.2.0",
