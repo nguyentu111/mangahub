@@ -13,6 +13,8 @@ import { register } from "~/services/registerServiceWorkers";
 import ThemeProvider from "~/context/themeContext";
 import { SubscriptionContextProvider } from "~/context/SubscriptionContext";
 import { Subscription } from "~/types";
+import { HistoryRouteContextProvider } from "~/context/HistoryRouteContext";
+import NotificationObserver from "~/context/NotificationObserver";
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -60,9 +62,13 @@ export default function App({
     <SessionProvider session={session} refetchInterval={5 * 60}>
       <JotaiProvider>
         <SubscriptionContextProvider value={{ subscription, setSubscription }}>
-          <ThemeProvider>
-            {getLayout(<Component {...pageProps} />)}
-          </ThemeProvider>
+          <NotificationObserver>
+            <ThemeProvider>
+              <HistoryRouteContextProvider>
+                {getLayout(<Component {...pageProps} />)}
+              </HistoryRouteContextProvider>
+            </ThemeProvider>
+          </NotificationObserver>
         </SubscriptionContextProvider>
       </JotaiProvider>
     </SessionProvider>

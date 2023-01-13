@@ -52,6 +52,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     ]);
     return {
       props: { hotComics, newComics },
+      revalidate: 3600,
     };
   } catch (error) {
     console.log({ loi: "loi load truyen ", error });

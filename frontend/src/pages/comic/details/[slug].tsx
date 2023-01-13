@@ -189,7 +189,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
       props: {
         comic: data,
       },
-      revalidate: 5 * 60 * 60,
+      revalidate: 1 * 60 * 60,
     };
   } catch (err) {
     return { notFound: true };
