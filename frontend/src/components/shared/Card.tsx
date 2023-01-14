@@ -21,7 +21,8 @@ const Card = ({ comic }: { comic: ComicCard }) => {
     <div className="flex flex-col overflow-hidden dark:text-white">
       <div className="aspect-h-4 aspect-w-3  overflow-hidden rounded-lg">
         <Link
-          href={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
+          as={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
+          href={"/comic/details/[slug]"}
         >
           <ImageWrapper>
             <Image
@@ -38,7 +39,8 @@ const Card = ({ comic }: { comic: ComicCard }) => {
         </Link>
       </div>
       <Link
-        href={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
+        as={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
+        href={"/comic/details/[slug]"}
       >
         <h1
           className="text-sm line-clamp-3 hover:text-red-500 sm:text-md md:text-lg"
@@ -49,7 +51,8 @@ const Card = ({ comic }: { comic: ComicCard }) => {
       </Link>
       <span className=" text-sm ">
         <Link
-          href={`${MANGA_PATH_NAME}/${MANGA_PATH_READ_NAME}/${comic.slug}/${comic.newChapSlug}`}
+          as={`${MANGA_PATH_NAME}/${MANGA_PATH_READ_NAME}/${comic.slug}/${comic.newChapSlug}`}
+          href={"/comic/read/[...slug]"}
         >
           {comic.newChap}
         </Link>
