@@ -14,7 +14,10 @@ const SwiperCard = ({ comic }: Props) => {
       <div className="aspect-h-4 aspect-w-3 rounded-xl overflow-hidden  relative">
         <Link
           as={`${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
-          href={"/comic/details/[slug]"}
+          href={{
+            query: { slug: comic.slug },
+            pathname: "/comic/details/[slug]",
+          }}
           className="block absolute"
         >
           <ImageWrapper>
@@ -36,7 +39,10 @@ const SwiperCard = ({ comic }: Props) => {
       </div>
       <Link
         as={`${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
-        href={"/comic/details/[slug]"}
+        href={{
+          query: { slug: comic.slug },
+          pathname: "/comic/details/[slug]",
+        }}
         className="block bottom-0"
       >
         <h2 className="hover:text-red-400 absolute w-full truncate text-xs text-black md:text-lg max-w-[200px] dark:text-white">
