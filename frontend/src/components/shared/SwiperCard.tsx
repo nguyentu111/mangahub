@@ -13,7 +13,7 @@ const SwiperCard = ({ comic }: Props) => {
     <>
       <div className="aspect-h-4 aspect-w-3 rounded-xl overflow-hidden  relative">
         <Link
-          as={`${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
+          as={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
           href={{
             query: { slug: comic.slug },
             pathname: "/comic/details/[slug]",
@@ -38,7 +38,7 @@ const SwiperCard = ({ comic }: Props) => {
         </Link>
       </div>
       <Link
-        as={`${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
+        as={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
         href={{
           query: { slug: comic.slug },
           pathname: "/comic/details/[slug]",
