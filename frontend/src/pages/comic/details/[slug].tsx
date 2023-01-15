@@ -29,13 +29,14 @@ const Details: NextPage<Props> = ({ comic }) => {
     useReadLocalStorage("visited-comics") as VistedComic[]
   )?.find((_comic) => _comic?.slug === comic?.slug)?.chapterSlug;
   // @ts-ignore
+  if (router.isFallback)
+    return <div className="text-4xl pt-20">Loading...</div>;
   return (
     <>
       <Head
         title={`${comic ? comic?.name + " - " : ""}  Manga-hub`}
         description={`${comic?.summary}`}
       />
-      {/* <ClientOnly> */}
       <div className="flex flex-col w-[90%] max-w-[1300px] mx-auto justify-center items-center text-black dark:text-white ">
         <div className="mt-10 w-full ">
           {router.isFallback ? (
