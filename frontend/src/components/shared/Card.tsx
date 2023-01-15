@@ -9,6 +9,7 @@ import {
 } from "~/constants";
 import { ComicCard } from "~/types";
 import ImageWrapper from "./ImageWrapper";
+import MyLink from "./MyLink";
 
 type Props = {};
 
@@ -20,12 +21,9 @@ const Card = ({ comic }: { comic: ComicCard }) => {
   return (
     <div className="flex flex-col overflow-hidden dark:text-white">
       <div className="aspect-h-4 aspect-w-3  overflow-hidden rounded-lg">
-        <Link
+        <MyLink
           as={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
-          href={{
-            query: { slug: comic.slug },
-            pathname: "/comic/details/[slug]",
-          }}
+          href={`/comic/details/${comic.slug}`}
         >
           <ImageWrapper>
             <Image
@@ -39,14 +37,11 @@ const Card = ({ comic }: { comic: ComicCard }) => {
               onError={handleErrorImage}
             />
           </ImageWrapper>
-        </Link>
+        </MyLink>
       </div>
-      <Link
+      <MyLink
         as={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
-        href={{
-          query: { slug: comic.slug },
-          pathname: "/comic/details/[slug]",
-        }}
+        href={`/comic/details/${comic.slug}`}
       >
         <h1
           className="text-sm line-clamp-3 hover:text-red-500 sm:text-md md:text-lg"
@@ -54,7 +49,7 @@ const Card = ({ comic }: { comic: ComicCard }) => {
         >
           {comic.name}
         </h1>
-      </Link>
+      </MyLink>
       <span className=" text-sm ">
         <Link
           as={`${MANGA_PATH_NAME}/${MANGA_PATH_READ_NAME}/${comic.slug}/${comic.newChapSlug}`}

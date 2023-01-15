@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { memo } from "react";
+import { memo, useRef } from "react";
 import { ComicCard } from "~/types";
 import { MANGA_PATH_NAME, MANGA_PATH_DETAILS_NAME } from "~/constants";
 import ImageWrapper from "./ImageWrapper";
+import MyLink from "./MyLink";
 type Props = {
   comic: ComicCard;
 };
@@ -12,12 +13,9 @@ const SwiperCard = ({ comic }: Props) => {
   return (
     <>
       <div className="aspect-h-4 aspect-w-3 rounded-xl overflow-hidden  relative">
-        <Link
+        <MyLink
           as={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
-          href={{
-            query: { slug: comic.slug },
-            pathname: "/comic/details/[slug]",
-          }}
+          href={`/comic/details/${comic.slug}`}
           className="block absolute"
         >
           <ImageWrapper>
@@ -35,20 +33,17 @@ const SwiperCard = ({ comic }: Props) => {
               {comic.newChap}
             </p>
           </div>
-        </Link>
+        </MyLink>
       </div>
-      <Link
+      <MyLink
         as={`/${MANGA_PATH_NAME}/${MANGA_PATH_DETAILS_NAME}/${comic.slug}`}
-        href={{
-          query: { slug: comic.slug },
-          pathname: "/comic/details/[slug]",
-        }}
+        href={`/comic/details/${comic.slug}`}
         className="block bottom-0"
       >
         <h2 className="hover:text-red-400 absolute w-full truncate text-xs text-black md:text-lg max-w-[200px] dark:text-white">
           {comic.name}
         </h2>
-      </Link>
+      </MyLink>
     </>
   );
 };
