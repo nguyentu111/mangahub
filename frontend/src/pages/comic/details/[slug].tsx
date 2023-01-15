@@ -183,7 +183,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
 ) => {
   const { slug } = context.params as Params;
   try {
-    const { data } = await axiosClient.get("lhmanga/comic/" + slug);
+    const { data } = await axiosClient.get("/lhmanga/comic/" + slug);
     if (!data) return { notFound: true };
     return {
       props: {

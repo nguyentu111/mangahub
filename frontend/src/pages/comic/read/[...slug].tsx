@@ -101,7 +101,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       slug: [mangaSlug, chapterSlug],
     } = context.params as Params;
     const { data } = await axiosClient.get(
-      "lhmanga/comic/" + mangaSlug + "/" + chapterSlug
+      "/lhmanga/comic/" + mangaSlug + "/" + chapterSlug
     );
     if (!data)
       return {
