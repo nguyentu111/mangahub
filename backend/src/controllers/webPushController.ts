@@ -52,35 +52,58 @@ export default function webPushController() {
         userId,
         identifications: { $elemMatch: { endpoint, p256dh, auth } },
       });
+      if (comicSlug !== "just_push_new_subscribe") {
+        if (!existingIdentifications) {
+          //update user to subscribers
+          await Subscriber.updateOne(
+            { userId },
+            {
+              userId,
+              $addToSet: {
+                identifications: {
+                  endpoint,
+                  p256dh,
+                  auth,
+                },
+                subComics: {
+                  comicSlug: comicSlug,
+                  lastestChap: (await lh.getComic(comicSlug))?.chapters[0].slug,
+                },
+              },
+            },
+            { upsert: true }
+          );
+        } else {
+          await Subscriber.updateOne(
+            { userId },
+            {
+              userId,
+              $addToSet: {
+                subComics: {
+                  comicSlug: comicSlug,
+                  lastestChap: (await lh.getComic(comicSlug))?.chapters[0].slug,
+                },
+              },
+            },
+            { upsert: true }
+          );
+        }
+
+        return res.status(200).json({
+          success: true,
+        });
+      }
+      //don't need to push comic for new device/browser case:
       if (!existingIdentifications) {
-        //update user to subscribers
         await Subscriber.updateOne(
           { userId },
           {
             userId,
-            $addToSet: {
+            $push: {
               identifications: {
                 endpoint,
                 p256dh,
                 auth,
-              },
-              subComics: {
-                comicSlug: comicSlug,
-                lastestChap: (await lh.getComic(comicSlug))?.chapters[0].slug,
-              },
-            },
-          },
-          { upsert: true }
-        );
-      } else {
-        await Subscriber.updateOne(
-          { userId },
-          {
-            userId,
-            $addToSet: {
-              subComics: {
-                comicSlug: comicSlug,
-                lastestChap: (await lh.getComic(comicSlug))?.chapters[0].slug,
               },
             },
           },
@@ -88,7 +111,7 @@ export default function webPushController() {
         );
       }
 
-      return res.status(200).json({
+      return res.status(201).json({
         success: true,
       });
     },
